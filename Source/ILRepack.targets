@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- ILRepack -->
+	<Target Name="ILRepacker" AfterTargets="Build" >
+		<ItemGroup>
+			<InputAssemblies Include="$(OutDir)\$(AssemblyName).dll" />
+			<InputAssemblies Include="$(OutDir)\*.dll" Exclude="$(OutDir)\$(AssemblyName).dll" />
+		</ItemGroup>
+		<ILRepack
+			Parallel="true"
+			Internalize="true"
+			DebugInfo="true"
+			Wildcards="true"
+			TargetKind="Dll"
+			AllowDuplicateResources = "false"
+			InputAssemblies="@(InputAssemblies)"
+			OutputFile="..\$(MSBuildProjectName)\Assemblies\$(AssemblyName).dll"
+		/>
+	</Target>
+	<!-- /ILRepack -->
+</Project>

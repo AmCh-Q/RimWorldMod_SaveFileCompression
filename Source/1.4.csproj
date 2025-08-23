@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<!-- Framework properties
+		https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#framework-properties -->
+		<TargetFramework>net472</TargetFramework>
+		<!-- Language options
+		https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/language -->
+		<DefineConstants>$(DefineConstants);v1_4;</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="obj\**" />
+		<EmbeddedResource Remove="obj\**" />
+		<None Remove="obj\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43" />
+		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.4.3901" />
+		<PackageReference Include="Lib.Harmony" Version="2.2.2" ExcludeAssets="runtime" />
+		<PackageReference Include="ZstdSharp.Port" Version="0.8.6" PrivateAssets="All" />
+	</ItemGroup>
+</Project>

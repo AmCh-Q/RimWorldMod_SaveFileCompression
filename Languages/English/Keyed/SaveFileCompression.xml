@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <SFC.Name>Save File Compression</SFC.Name>
+  <SFC.CompressionStat.DescriptionShort>{0}/{1} MiB</SFC.CompressionStat.DescriptionShort>
+  <SFC.CompressionStat.Description>{0}/{1} bytes ({2}, Ratio: {3}, Format: {4}）</SFC.CompressionStat.Description>
+  <SFC.Config.ShowDebugMsg>Show Debug Logs</SFC.Config.ShowDebugMsg>
+
+  <SFC.Config.CompressionType.zstd>Use ZStandard Compression</SFC.Config.CompressionType.zstd>
+  <SFC.Config.CompressionType.zstd_Tip>ZStandard has excellent speed and compression ratio and can be configured between level -7 and 22, where higher level means higher compression ratio but lower speed, default 11; levels under 1 and above 19 are unrecommended). However as a new compression algorithm, there are not many third-party software support. Currently you can manually extract the compressed files with 7-Zip-zstd (not the regular 7-Zip) or PeaZip.</SFC.Config.CompressionType.zstd_Tip>
+  <SFC.Config.CompressionType.Gzip>Use Gzip Compression</SFC.Config.CompressionType.Gzip>
+  <SFC.Config.CompressionType.Gzip_Tip>Gzip has great compatibility while offering decent speed and compression ratio, which can be configured as level 0 (prioritize speed) or 1 (prioritize compression size, default). Most archive softwares support Gzip, and some text editors (such as Kate) allow you to edit the compressed text directly.</SFC.Config.CompressionType.Gzip_Tip>
+  <SFC.Config.CompressionType.None>Disable compression</SFC.Config.CompressionType.None>
+  <SFC.Config.CompressionType.None_Tip>Disable the compression function of this mod and use the standard XML format from the vanilla game. While the save file will be much larger, you can edit the saves directly with any text editor.</SFC.Config.CompressionType.None_Tip>
+  <SFC.Config.CompressionLevel>Compression Level: {0}</SFC.Config.CompressionLevel>
+  <SFC.Info.Uncompressed>Uncompressed</SFC.Info.Uncompressed>
+  <SFC.Info.Compressed>Compressed ({0} {1})</SFC.Info.Compressed>
+  <SFC.Info.Length.Uncompressed>{0} MiB</SFC.Info.Length.Uncompressed>
+  <SFC.Info.Length.Unknown>?/{0} MiB</SFC.Info.Length.Unknown>
+
+  <SFC.Log.SavedFile>Saved {0} : {1}</SFC.Log.SavedFile>
+</LanguageData>
