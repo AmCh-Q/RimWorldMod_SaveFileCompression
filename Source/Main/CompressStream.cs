@@ -40,6 +40,7 @@ public class CompressStream : Stream
 				? CompressionLevel.Optimal : CompressionLevel.Fastest, leaveOpen: false),
 			_ => _baseStream,
 		};
+		UncompressedSize = 0;
 	}
 
 	public string FilePath { get; private set; }
