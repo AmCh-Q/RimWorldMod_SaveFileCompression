@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  <SFC.Name>压缩存档</SFC.Name>
+  <SFC.Name>存档文件压缩</SFC.Name>
   <SFC.CompressionStat.DescriptionShort>{0}/{1} MiB</SFC.CompressionStat.DescriptionShort>
   <SFC.CompressionStat.Description>{0}/{1} 字节（{2}，压缩率：{3}，压缩格式：{4}）</SFC.CompressionStat.Description>
   <SFC.Config.ShowDebugMsg>显示详细DEBUG记录</SFC.Config.ShowDebugMsg>
 
-  <SFC.Config.CompressionType.zstd>使用ZStandard格式压缩</SFC.Config.CompressionType.zstd>
-  <SFC.Config.CompressionType.zstd_Tip>ZStandard (zst,zstd) 格式压缩的速度和压缩率都非常高。可以在-7到22档位之间设置（档位越高，压缩率越高，速度越慢，默认11，不推荐0以下和20以上的档位）。缺点是作为新的压缩算法，目前第三方软件支持很少。可以使用7-Zip-zstd（通常的7-Zip不行）或者PeaZip来手动解压存档文件。</SFC.Config.CompressionType.zstd_Tip>
+  <SFC.Config.CompressionType.zstd>使用Zstandard格式压缩</SFC.Config.CompressionType.zstd>
+  <SFC.Config.CompressionType.zstd_Tip>Zstandard (zst,zstd) 格式压缩的速度和压缩率都非常高。可以在-7到22档位之间设置（档位越高，压缩率越高，速度越慢，默认11，不推荐0以下和20以上的档位）。缺点是作为新的压缩算法，目前第三方软件支持很少。可以使用7-Zip-zstd（通常的7-Zip不行）或者PeaZip来手动解压存档文件。</SFC.Config.CompressionType.zstd_Tip>
   <SFC.Config.CompressionType.Gzip>使用Gzip格式压缩</SFC.Config.CompressionType.Gzip>
   <SFC.Config.CompressionType.Gzip_Tip>Gzip格式在压缩效率和速度都可接受的情况下兼容性非常好。可以设置为档位0（速度优先）或者1（压缩率优先，默认）。绝大多数解压程序都可以解压Gzip，且部分文本编辑软件(例如Kate)可以直接打开并编辑Gzip格式压缩了的存档。</SFC.Config.CompressionType.Gzip_Tip>
   <SFC.Config.CompressionType.None>不压缩游戏存档</SFC.Config.CompressionType.None>
@@ -15,7 +15,7 @@
   <SFC.Info.Uncompressed>未压缩</SFC.Info.Uncompressed>
   <SFC.Info.Compressed>使用{0}格式压缩 ({1})</SFC.Info.Compressed>
   <SFC.Info.Length.Uncompressed>{0} MiB</SFC.Info.Length.Uncompressed>
-  <SFC.Info.Length.Unknown>?/{0} MiB</SFC.Info.Length.Unknown>
+  <SFC.Info.Length.Unknown>{0}/? MiB</SFC.Info.Length.Unknown>
 
   <SFC.Log.SavedFile>已保存至{0}：{1}</SFC.Log.SavedFile>
 </LanguageData>
