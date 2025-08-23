@@ -23,7 +23,7 @@ public static class ScribeLoader_InitLoading
 			if (original is null)
 				continue;
 			harmony.Patch(original, transpiler: new HarmonyMethod(((Delegate)Transpiler).Method));
-			Log.Message("Patched " + original.Name);
+			Log.Message("[SaveFileCompression]: Patched " + original.Name);
 		}
 	}
 

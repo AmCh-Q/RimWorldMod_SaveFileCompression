@@ -15,7 +15,7 @@ public static class ScribeSaver_FinalizeSaving
 		if (original is null)
 			return;
 		harmony.Patch(original, finalizer: new HarmonyMethod(((Delegate)Finalizer).Method));
-		Log.Message("Patched " + original.Name);
+		Log.Message("[SaveFileCompression]: Patched " + original.Name);
 	}
 
 	public static void Finalizer()

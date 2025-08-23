@@ -19,7 +19,7 @@ public static class ScribeSaver_InitSaving
 		if (original is null)
 			return;
 		harmony.Patch(original, transpiler: new HarmonyMethod(((Delegate)Transpiler).Method));
-		Log.Message("Patched " + original.Name);
+		Log.Message("[SaveFileCompression]: Patched " + original.Name);
 	}
 
 	public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> codeInstructions)

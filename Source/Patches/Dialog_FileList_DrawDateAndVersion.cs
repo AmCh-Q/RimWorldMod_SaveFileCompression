@@ -19,7 +19,7 @@ public static class Dialog_FileList_DrawDateAndVersion
 		if (original is null)
 			return;
 		harmony.Patch(original, prefix: new HarmonyMethod(((Delegate)Prefix).Method));
-		Log.Message("Patched " + original.Name);
+		Log.Message("[SaveFileCompression]: Patched " + original.Name);
 	}
 
 	public static void Prefix(SaveFileInfo sfi, Rect rect)
