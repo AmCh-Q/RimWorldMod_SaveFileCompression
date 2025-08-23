@@ -3,6 +3,7 @@
   <Excluded>
     <exclude>.git</exclude>
     <exclude>Source\.vs</exclude>
+    <exclude>Source\bin</exclude>
     <exclude>Source\obj</exclude>
   </Excluded>
 </Configuration>
