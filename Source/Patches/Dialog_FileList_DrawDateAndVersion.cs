@@ -33,7 +33,6 @@ public static class Dialog_FileList_DrawDateAndVersion
 #endif
 		Text.Font = GameFont.Tiny;
 		Text.Anchor = TextAnchor.UpperRight;
-		Rect rect2 = new(0f, 2f, rect.width, rect.height / 2f);
 		GUI.color = SaveFileInfo.UnimportantTextColor;
 
 		string path = sfi.FileInfo.FullName;
@@ -50,11 +49,9 @@ public static class Dialog_FileList_DrawDateAndVersion
 			labelText = "SFC.Info.Compressed".Translate(type.ToString(),
 				hasFileInfo ? stat.CompressionPercentage : "?%");
 		}
-
+		Rect rect2 = new(0f, 2f, rect.width, rect.height / 2f);
 		Widgets.Label(rect2, labelText);
 
-		Rect rect3 = new(0f, rect2.yMax, rect.width, rect.height / 2f);
-		GUI.color = sfi.VersionColor;
 		if (type == CompressionType.None)
 		{
 			labelText = "SFC.Info.Length.Uncompressed".Translate(
@@ -69,6 +66,7 @@ public static class Dialog_FileList_DrawDateAndVersion
 		{
 			labelText = stat.DescriptionShort;
 		}
+		Rect rect3 = new(0f, rect2.yMax, rect.width, rect.height / 2f);
 		Widgets.Label(rect3, labelText);
 #if v1_2
 		GUI.EndGroup();
