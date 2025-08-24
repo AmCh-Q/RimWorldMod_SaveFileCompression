@@ -1,16 +1,16 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using HarmonyLib;
 using Verse;
 
 namespace SaveFileCompression.Patches;
 
 public static class ScribeLoader_InitLoading
 {
-	public static MethodInfo[] originals = [
+	public static readonly MethodInfo[] originals = [
 		typeof(ScribeLoader).GetMethod(nameof(ScribeLoader.InitLoading)),
 		typeof(ScribeLoader).GetMethod(nameof(ScribeLoader.InitLoadingMetaHeaderOnly)),
 		typeof(ScribeMetaHeaderUtility).GetMethod(nameof(ScribeMetaHeaderUtility.GameVersionOf))
@@ -18,12 +18,14 @@ public static class ScribeLoader_InitLoading
 
 	public static void Patch(Harmony harmony)
 	{
+		HarmonyMethod transpiler = new(
+			typeof(ScribeLoader_InitLoading).GetMethod(nameof(Transpiler)));
 		foreach (MethodInfo original in originals)
 		{
 			if (original is null)
 				continue;
-			harmony.Patch(original, transpiler: new HarmonyMethod(((Delegate)Transpiler).Method));
-			Log.Message("[SaveFileCompression]: Patched " + original.Name);
+			harmony.Patch(original, transpiler: transpiler);
+			Debug.Message("Patched ", original.Name);
 		}
 	}
 

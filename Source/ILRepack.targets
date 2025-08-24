@@ -3,8 +3,8 @@
 	<!-- ILRepack -->
 	<Target Name="ILRepacker" AfterTargets="Build" >
 		<ItemGroup>
-			<InputAssemblies Include="$(OutDir)\$(AssemblyName).dll" />
-			<InputAssemblies Include="$(OutDir)\*.dll" Exclude="$(OutDir)\$(AssemblyName).dll" />
+			<InputAssemblies Include="$(OutDir)$(AssemblyName).dll" />
+			<InputAssemblies Include="$(OutDir)*.dll" Exclude="$(OutDir)$(AssemblyName).dll" />
 		</ItemGroup>
 		<ILRepack
 			Parallel="true"

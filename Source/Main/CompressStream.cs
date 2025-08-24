@@ -14,7 +14,8 @@ public class CompressStream : Stream
 {
 	private readonly Stream _baseStream;
 	private readonly Stream _compStream;
-	public readonly CompressionType compressionType;
+	public CompFormat CompressionType { get; }
+	public string FilePath { get; }
 
 	public CompressStream(string filePath)
 		: this(new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None), filePath)
@@ -26,16 +27,20 @@ public class CompressStream : Stream
 			  SaveFileCompression.settings.CompressionLevel)
 	{ }
 
-	public CompressStream(Stream sourceStream, string filePath, CompressionType compressionType, int level = 1)
+	public CompressStream(Stream sourceStream, string filePath, CompFormat compressionType, int level = 1)
 	{
-		FilePath = filePath;
-		this.compressionType = compressionType;
+		// Verse.SafeSaver.NewFileSuffix
+		if (filePath.EndsWith(".new"))
+			FilePath = filePath.Substring(0, filePath.Length - 4);
+		else
+			FilePath = filePath;
+		CompressionType = compressionType;
 		_baseStream = sourceStream;
 		_compStream = compressionType switch
 		{
-			CompressionType.zstd => new CompressionStream(
+			CompFormat.zstd => new CompressionStream(
 				_baseStream, level, leaveOpen: false),
-			CompressionType.Gzip => new GZipStream(
+			CompFormat.Gzip => new GZipStream(
 				_baseStream, level > 0
 				? CompressionLevel.Optimal : CompressionLevel.Fastest, leaveOpen: false),
 			_ => _baseStream,
@@ -43,7 +48,6 @@ public class CompressStream : Stream
 		UncompressedSize = 0;
 	}
 
-	public string FilePath { get; private set; }
 	public long UncompressedSize { get; private set; }
 	public long CompressedSize => _baseStream.Position;
 	public float CompressionRatio => (float)CompressedSize / UncompressedSize;
@@ -55,7 +59,6 @@ public class CompressStream : Stream
 	}
 	protected override void Dispose(bool disposing)
 	{
-		Log.Message("Disposing!");
 		if (disposing)
 			_compStream.Dispose();
 		base.Dispose(disposing);
@@ -66,9 +69,13 @@ public class CompressStream : Stream
 		_baseStream.Flush();
 		if (!FilePath.NullOrEmpty())
 		{
-			CompressionStat stat = new(compressionType, UncompressedSize, CompressedSize);
+			CompressionStat stat = new(CompressionType, UncompressedSize, CompressedSize);
 			SaveFileCompression.settings.compressionData[FilePath] = stat;
 			SaveFileCompression.settings.compressionDataDirty = true;
+			Debug.Message("SFC.Log.SavedFile".Translate(
+				new NamedArgument(FilePath, nameof(FilePath)),
+				new NamedArgument(stat.Description, nameof(stat.Description))
+			));
 		}
 		_compStream.Close();
 	}

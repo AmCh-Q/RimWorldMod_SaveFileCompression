@@ -1,5 +1,4 @@
-﻿
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Reflection;
 using Verse;
@@ -14,14 +13,23 @@ public static class ScribeSaver_FinalizeSaving
 	{
 		if (original is null)
 			return;
-		harmony.Patch(original, finalizer: new HarmonyMethod(((Delegate)Finalizer).Method));
-		Log.Message("[SaveFileCompression]: Patched " + original.Name);
+		HarmonyMethod finalizer = new(
+			typeof(ScribeSaver_FinalizeSaving).GetMethod(nameof(Finalizer)));
+		harmony.Patch(original, finalizer: finalizer);
+		Debug.Message("Patched ", original.Name);
 	}
 
 	public static void Finalizer()
 	{
 		Settings settings = SaveFileCompression.settings;
 		if (settings.compressionDataDirty)
+		{
+			Debug.Message("Writing settings");
 			settings.Write();
+		}
+		else
+		{
+			Debug.Message("Not writing settings");
+		}
 	}
 }

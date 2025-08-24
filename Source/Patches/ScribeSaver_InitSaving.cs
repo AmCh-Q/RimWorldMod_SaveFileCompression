@@ -18,23 +18,29 @@ public static class ScribeSaver_InitSaving
 	{
 		if (original is null)
 			return;
-		harmony.Patch(original, transpiler: new HarmonyMethod(((Delegate)Transpiler).Method));
-		Log.Message("[SaveFileCompression]: Patched " + original.Name);
+		HarmonyMethod transpiler = new(
+			typeof(ScribeSaver_InitSaving).GetMethod(nameof(Transpiler)));
+		harmony.Patch(original, transpiler: transpiler);
+		Debug.Message("Patched ", original.Name);
 	}
 
-	public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> codeInstructions)
+	public static IEnumerable<CodeInstruction> Transpiler(
+		IEnumerable<CodeInstruction> codeInstructions)
 	{
-
+		MethodInfo m_CompressedStream
+			= typeof(ScribeSaver_InitSaving).GetMethod(nameof(CompressedStream));
 		foreach (CodeInstruction codeInstruction in codeInstructions)
 		{
-			yield return codeInstruction;
+			yield return codeInstruction; // Stream rawStream
 			if (codeInstruction.opcode == OpCodes.Newobj &&
 				codeInstruction.operand is ConstructorInfo ctor &&
 				ctor.DeclaringType == typeof(FileStream))
 			{
-				yield return new CodeInstruction(OpCodes.Ldarg_1); // string filePath
-				yield return new CodeInstruction(OpCodes.Ldarg_2); // string documentElementName
-				yield return new CodeInstruction(OpCodes.Call, ((Delegate)CompressedStream).Method);
+				// string filePath
+				yield return new CodeInstruction(OpCodes.Ldarg_1);
+				// string documentElementName
+				yield return new CodeInstruction(OpCodes.Ldarg_2);
+				yield return new CodeInstruction(OpCodes.Call, m_CompressedStream);
 			}
 		}
 	}

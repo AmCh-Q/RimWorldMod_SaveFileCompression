@@ -5,9 +5,6 @@
   <author>AmCh</author>
   <modVersion IgnoreIfNoMatchingField="True">0.0.0</modVersion>
   <!--
-  <authors>
-    <li>AmCh</li>
-  </authors>
   <modIconPath IgnoreIfNoMatchingField="True">SaveFileCompression/ModIcon</modIconPath>
   <url>https://github.com/AmCh-Q/RimWorldMod_SaveFileCompression</url>
   -->
@@ -31,6 +28,11 @@ SaveFileCompression
   </modDependencies>
   <loadAfter>
     <li>brrainz.harmony</li>
-    <li>Ludeon.RimWorld</li>
   </loadAfter>
+  <incompatibleWith>
+    <li>Revolus.Compressor</li>
+    <li>Mlie.SavegameCompressor</li>
+    <li>InsertKey.RWSCompressor</li>
+    <li>Keepercraft.RimKeeperSaves</li>
+  </incompatibleWith>
 </ModMetaData>

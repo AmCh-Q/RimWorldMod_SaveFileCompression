@@ -1,5 +1,4 @@
 ﻿
-
 using HarmonyLib;
 using RimWorld;
 using System;
@@ -18,12 +17,16 @@ public static class Dialog_FileList_DrawDateAndVersion
 	{
 		if (original is null)
 			return;
-		harmony.Patch(original, prefix: new HarmonyMethod(((Delegate)Prefix).Method));
-		Log.Message("[SaveFileCompression]: Patched " + original.Name);
+		HarmonyMethod prefix = new(
+			typeof(Dialog_FileList_DrawDateAndVersion).GetMethod(nameof(Prefix)));
+		harmony.Patch(original, prefix: prefix);
+		Debug.Message("Patched ", original.Name);
 	}
 
 	public static void Prefix(SaveFileInfo sfi, Rect rect)
 	{
+		if (!SaveFileCompression.settings.showStats)
+			return;
 		rect.x -= rect.width * 2.1f;
 		rect.width *= 2f;
 #if v1_2
@@ -36,31 +39,42 @@ public static class Dialog_FileList_DrawDateAndVersion
 		GUI.color = SaveFileInfo.UnimportantTextColor;
 
 		string path = sfi.FileInfo.FullName;
-		bool hasFileInfo = SaveFileCompression.settings.compressionData.TryGetValue(path, out CompressionStat stat);
-		CompressionType type = Decompress.GetType(path);
+		bool hasFileInfo = SaveFileCompression.settings.compressionData
+			.TryGetValue(path, out CompressionStat stat);
+		CompFormat type = Decompress.GetType(path);
 
 		string labelText;
-		if (type == CompressionType.None)
+		if (type == CompFormat.None)
 		{
 			labelText = "SFC.Info.Uncompressed".Translate();
 		}
 		else
 		{
-			labelText = "SFC.Info.Compressed".Translate(type.ToString(),
-				hasFileInfo ? stat.CompressionPercentage : "?%");
+			labelText = "SFC.Info.Compressed".Translate(
+				new NamedArgument(type.ToString(), "CompressionType"),
+				new NamedArgument(hasFileInfo
+					? stat.CompressionPercentage
+					: "?%", "CompressionPercentage")
+			);
 		}
 		Rect rect2 = new(0f, 2f, rect.width, rect.height / 2f);
 		Widgets.Label(rect2, labelText);
 
-		if (type == CompressionType.None)
+		if (type == CompFormat.None)
 		{
 			labelText = "SFC.Info.Length.Uncompressed".Translate(
-				(sfi.FileInfo.Length / 1048576f).ToString("F2"));
+				new NamedArgument(
+					(sfi.FileInfo.Length / 1048576f).ToString("F2"),
+					"UnCompressedSize")
+			);
 		}
 		else if (!hasFileInfo)
 		{
 			labelText = "SFC.Info.Length.Unknown".Translate(
-				(sfi.FileInfo.Length / 1048576f).ToString("F2"));
+				new NamedArgument(
+					(sfi.FileInfo.Length / 1048576f).ToString("F2"),
+					"CompressedSize")
+			);
 		}
 		else
 		{

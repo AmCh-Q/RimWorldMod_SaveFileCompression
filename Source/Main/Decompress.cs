@@ -10,13 +10,13 @@ namespace SaveFileCompression;
 // Then returns Stream/StreamReader for uncompressed data
 public static class Decompress
 {
-	public static CompressionType GetType(string filePath)
+	public static CompFormat GetType(string filePath)
 	{
 		using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read);
 		return GetType(fileStream);
 	}
 
-	public static CompressionType GetType(Stream stream)
+	public static CompFormat GetType(Stream stream)
 	{
 		byte[] header = new byte[4];
 		int bytesRead = stream.Read(header, 0, 4);
@@ -26,7 +26,7 @@ public static class Decompress
 			header[1] == 0x8B &&
 			header[2] == 0x08) // header for Gzip
 		{
-			return CompressionType.Gzip;
+			return CompFormat.Gzip;
 		}
 		else if (bytesRead >= 4 &&
 			header[0] == 0x28 &&
@@ -34,11 +34,11 @@ public static class Decompress
 			header[2] == 0x2F &&
 			header[3] == 0xFD) // Magic header for zstd
 		{
-			return CompressionType.zstd;
+			return CompFormat.zstd;
 		}
 		else
 		{
-			return CompressionType.None;
+			return CompFormat.None;
 		}
 	}
 
@@ -50,8 +50,8 @@ public static class Decompress
 			fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 			Stream stream = GetType(fileStream) switch
 			{
-				CompressionType.Gzip => new GZipStream(fileStream, CompressionMode.Decompress, leaveOpen: false),
-				CompressionType.zstd => new DecompressionStream(fileStream, leaveOpen: false),
+				CompFormat.Gzip => new GZipStream(fileStream, CompressionMode.Decompress, leaveOpen: false),
+				CompFormat.zstd => new DecompressionStream(fileStream, leaveOpen: false),
 				_ => fileStream,
 			};
 			fileStream = null;
