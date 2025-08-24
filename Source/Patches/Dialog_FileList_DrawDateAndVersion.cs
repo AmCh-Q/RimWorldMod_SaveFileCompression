@@ -1,13 +1,11 @@
-﻿
+﻿using System.Reflection;
 using HarmonyLib;
 using RimWorld;
-using System;
-using System.Reflection;
 using UnityEngine;
 using Verse;
-using Verse.Noise;
 
 namespace SaveFileCompression.Patches;
+
 public static class Dialog_FileList_DrawDateAndVersion
 {
 	public static MethodInfo original

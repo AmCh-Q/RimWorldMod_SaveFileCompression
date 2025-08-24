@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
-using System;
-using System.Reflection;
+﻿using System.Reflection;
+using HarmonyLib;
 using Verse;
 
 namespace SaveFileCompression.Patches;
+
 public static class ScribeSaver_FinalizeSaving
 {
 	public static MethodInfo original

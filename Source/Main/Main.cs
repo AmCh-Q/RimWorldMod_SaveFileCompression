@@ -1,9 +1,10 @@
-﻿using HarmonyLib;
-using System.Reflection;
+﻿using System.Reflection;
+using HarmonyLib;
 using UnityEngine;
 using Verse;
 
 [assembly: AssemblyVersionAttribute("1.0.0.0")]
+
 namespace SaveFileCompression;
 
 public enum CompFormat
@@ -16,6 +17,7 @@ public enum CompFormat
 public partial class SaveFileCompression : Mod
 {
 	public static Settings settings = null!;
+
 	public SaveFileCompression(ModContentPack content) : base(content)
 	{
 		settings = GetSettings<Settings>();
@@ -25,8 +27,10 @@ public partial class SaveFileCompression : Mod
 		Patches.ScribeSaver_FinalizeSaving.Patch(harmony);
 		Patches.Dialog_FileList_DrawDateAndVersion.Patch(harmony);
 	}
+
 	public override void DoSettingsWindowContents(Rect inRect)
 		=> settings!.DoSettingsWindowContents(inRect);
+
 	public override string SettingsCategory()
 		=> "SFC.Name".Translate();
 }

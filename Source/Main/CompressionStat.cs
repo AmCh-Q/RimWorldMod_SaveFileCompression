@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEngine;
 using Verse;
-using ZstdSharp;
 
 namespace SaveFileCompression;
 
@@ -23,12 +19,15 @@ public struct CompressionStat(
 	public readonly string CompressionFormat => compressionFormat.ToString();
 	public readonly long UnCompressedSize => unCompressedSize;
 	public readonly long CompressedSize => compressedSize;
+
 	public readonly float CompressionRatio
 		=> (float)unCompressedSize / compressedSize;
+
 	public readonly string CompressionPercentage
 		=> (CompressedSize > 0 && unCompressedSize > 0)
 		? ((float)CompressedSize / unCompressedSize).ToStringPercent()
 		: "?%";
+
 	public readonly string DescriptionShort
 		=> "SFC.CompressionStat.DescriptionShort".Translate(
 			new NamedArgument(CompressedSize > 0
@@ -37,6 +36,7 @@ public struct CompressionStat(
 			new NamedArgument(UnCompressedSize > 0
 				? (UnCompressedSize / 1048576f).ToString("F2")
 				: "?", nameof(UnCompressedSize)));
+
 	public readonly string Description
 		=> "SFC.CompressionStat.Description".Translate(
 			new NamedArgument(CompressedSize > 0 ?
