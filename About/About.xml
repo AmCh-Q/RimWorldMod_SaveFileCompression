@@ -3,7 +3,7 @@
   <packageId>AmCh.SaveFileCompression</packageId>
   <name>Save File Compression</name>
   <author>AmCh</author>
-  <modVersion IgnoreIfNoMatchingField="True">0.0.0</modVersion>
+  <modVersion IgnoreIfNoMatchingField="True">0.1.0</modVersion>
   <!--
   <modIconPath IgnoreIfNoMatchingField="True">SaveFileCompression/ModIcon</modIconPath>
   <url>https://github.com/AmCh-Q/RimWorldMod_SaveFileCompression</url>
