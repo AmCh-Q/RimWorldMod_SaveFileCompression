@@ -49,7 +49,7 @@ public static class Dialog_FileList_DrawDateAndVersion
 		else
 		{
 			labelText = "SFC.Info.Compressed".Translate(
-				new NamedArgument(type.ToString(), "CompressionFormat"),
+				new NamedArgument(type.ToString(), "CompressionType"),
 				new NamedArgument(hasFileInfo
 					? stat.CompressionPercentage
 					: "?%", "CompressionPercentage")

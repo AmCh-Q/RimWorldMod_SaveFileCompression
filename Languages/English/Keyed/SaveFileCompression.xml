@@ -2,19 +2,19 @@
 <LanguageData>
   <SFC.Name>Save File Compression</SFC.Name>
   <SFC.CompressionStat.DescriptionShort>{CompressedSize}/{UnCompressedSize} MiB</SFC.CompressionStat.DescriptionShort>
-  <SFC.CompressionStat.Description>{CompressedSize}/{UnCompressedSize} bytes ({CompressionPercentage}, Ratio: {CompressionRatio}, Format: {CompressionFormat}）</SFC.CompressionStat.Description>
+  <SFC.CompressionStat.Description>{CompressedSize}/{UnCompressedSize} bytes ({CompressionPercentage}, Ratio: {CompressionRatio}, Format: {CompressionType}）</SFC.CompressionStat.Description>
   <SFC.Config.ShowStats>Show compression file stats in save list</SFC.Config.ShowStats>
   <SFC.Config.ShowDebugMsg>Show Debug Logs</SFC.Config.ShowDebugMsg>
 
-  <SFC.Config.CompressionFormat.zstd>Use Zstandard Compression</SFC.Config.CompressionFormat.zstd>
-  <SFC.Config.CompressionFormat.zstd_Tip>Zstandard has excellent speed and compression ratio and can be configured between level -7 and 22, where higher level means higher compression ratio but lower speed, default 11; levels under 1 and above 19 are unrecommended). However as a new compression algorithm, there are not many third-party software support. Currently you can manually extract the compressed files with 7-Zip-zstd (not the regular 7-Zip) or PeaZip.</SFC.Config.CompressionFormat.zstd_Tip>
-  <SFC.Config.CompressionFormat.Gzip>Use Gzip Compression</SFC.Config.CompressionFormat.Gzip>
-  <SFC.Config.CompressionFormat.Gzip_Tip>Gzip has great compatibility while offering decent speed and compression ratio, which can be configured as level 0 (prioritize speed) or 1 (prioritize compression size, default). Most archive softwares support Gzip, and some text editors (such as Kate) allow you to edit the compressed text directly.</SFC.Config.CompressionFormat.Gzip_Tip>
-  <SFC.Config.CompressionFormat.None>Disable compression</SFC.Config.CompressionFormat.None>
-  <SFC.Config.CompressionFormat.None_Tip>Disable the compression function of this mod and use the standard XML format from the vanilla game. While the save file will be much larger, you can edit the saves directly with any text editor.</SFC.Config.CompressionFormat.None_Tip>
+  <SFC.Config.CompressionType.zstd>Use Zstandard Compression</SFC.Config.CompressionType.zstd>
+  <SFC.Config.CompressionType.zstd_Tip>Zstandard has excellent speed and compression ratio and can be configured between level -7 and 22, where higher level means higher compression ratio but lower speed, default 11; levels under 1 and above 19 are unrecommended). However as a new compression algorithm, there are not many third-party software support. Currently you can manually extract the compressed files with 7-Zip-zstd (not the regular 7-Zip) or PeaZip.</SFC.Config.CompressionType.zstd_Tip>
+  <SFC.Config.CompressionType.Gzip>Use Gzip Compression</SFC.Config.CompressionType.Gzip>
+  <SFC.Config.CompressionType.Gzip_Tip>Gzip has great compatibility while offering decent speed and compression ratio, which can be configured as level 0 (prioritize speed) or 1 (prioritize compression size, default). Most archive softwares support Gzip, and some text editors (such as Kate) allow you to edit the compressed text directly.</SFC.Config.CompressionType.Gzip_Tip>
+  <SFC.Config.CompressionType.None>Disable compression</SFC.Config.CompressionType.None>
+  <SFC.Config.CompressionType.None_Tip>Disable the compression function of this mod and use the standard XML format from the vanilla game. While the save file will be much larger, you can edit the saves directly with any text editor.</SFC.Config.CompressionType.None_Tip>
   <SFC.Config.CompressionLevel>Compression Level: {CompressionLevel}</SFC.Config.CompressionLevel>
   <SFC.Info.Uncompressed>Uncompressed</SFC.Info.Uncompressed>
-  <SFC.Info.Compressed>Compressed ({CompressionFormat} {CompressionPercentage})</SFC.Info.Compressed>
+  <SFC.Info.Compressed>Compressed ({CompressionType} {CompressionPercentage})</SFC.Info.Compressed>
   <SFC.Info.Length.Uncompressed>{UnCompressedSize} MiB</SFC.Info.Length.Uncompressed>
   <SFC.Info.Length.Unknown>{CompressedSize}/? MiB</SFC.Info.Length.Unknown>
 
