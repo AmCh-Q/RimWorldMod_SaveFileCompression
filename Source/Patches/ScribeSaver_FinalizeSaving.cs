@@ -6,7 +6,7 @@ namespace SaveFileCompression.Patches;
 
 public static class ScribeSaver_FinalizeSaving
 {
-	public static MethodInfo original
+	public static readonly MethodInfo original
 		= typeof(ScribeSaver).GetMethod(nameof(ScribeSaver.FinalizeSaving));
 
 	public static void Patch(Harmony harmony)
