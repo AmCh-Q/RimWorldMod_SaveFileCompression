@@ -26,6 +26,8 @@ public partial class SaveFileCompression : Mod
 		Patches.ScribeSaver_InitSaving.Patch(harmony);
 		Patches.ScribeSaver_FinalizeSaving.Patch(harmony);
 		Patches.Dialog_FileList_DrawDateAndVersion.Patch(harmony);
+		Patches.Better_ModMismatch_Window.BeginReading.Patch(harmony);
+		Patches.Better_ModMismatch_Window.EndReading.Patch(harmony);
 	}
 
 	public override void DoSettingsWindowContents(Rect inRect)
