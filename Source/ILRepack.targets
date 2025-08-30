@@ -5,6 +5,7 @@
 		<ItemGroup>
 			<InputAssemblies Include="$(OutDir)$(AssemblyName).dll" />
 			<InputAssemblies Include="$(OutDir)*.dll" Exclude="$(OutDir)$(AssemblyName).dll" />
+			<LibraryPath Include="%(ReferencePathWithRefAssemblies.RelativeDir)" />
 		</ItemGroup>
 		<ILRepack
 			Parallel="true"
@@ -14,6 +15,7 @@
 			TargetKind="Dll"
 			AllowDuplicateResources = "false"
 			InputAssemblies="@(InputAssemblies)"
+			LibraryPath="@(LibraryPath)"
 			OutputFile="..\$(MSBuildProjectName)\Assemblies\$(AssemblyName).dll"
 		/>
 	</Target>
