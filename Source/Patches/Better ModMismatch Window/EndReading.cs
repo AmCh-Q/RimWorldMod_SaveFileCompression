@@ -30,7 +30,7 @@ public static class EndReading
 		IEnumerable<CodeInstruction> instructions)
 	{
 		MethodInfo m_Save_Path = typeof(XDocument).GetMethod(nameof(XDocument.Save), [typeof(string)]);
-		MethodInfo m_SaveDocumentToPath = typeof(BeginReading).GetMethod(nameof(SaveDocumentToPath));
+		MethodInfo m_SaveDocumentToPath = typeof(EndReading).GetMethod(nameof(SaveDocumentToPath));
 
 		List<CodeInstruction> iList = [.. instructions];
 		for (int i = 0; i < iList.Count; i++)
