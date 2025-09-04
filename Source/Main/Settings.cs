@@ -6,10 +6,10 @@ namespace SaveFileCompression;
 
 public class Settings : ModSettings
 {
-	private const CompFormat dflt_compressionType = CompFormat.zstd;
-	private const float dflt_compressionFrac = (11f - (-7f)) / (22f - (-7f));
+	private const CompFormat dflt_compressionFormat = CompFormat.zstd;
+	private const float dflt_compressionFrac = (11f - 1f) / (17f - 1f);
 
-	public CompFormat compressionType = dflt_compressionType;
+	public CompFormat compressionFormat = dflt_compressionFormat;
 	public float compressionFrac = dflt_compressionFrac;
 
 	public Dictionary<string, CompressionStat> compressionData = [];
@@ -20,7 +20,7 @@ public class Settings : ModSettings
 
 	public override void ExposeData()
 	{
-		Scribe_Values.Look(ref compressionType, nameof(compressionType), dflt_compressionType);
+		Scribe_Values.Look(ref compressionFormat, nameof(compressionFormat), dflt_compressionFormat);
 		Scribe_Values.Look(ref compressionFrac, nameof(compressionFrac), dflt_compressionFrac);
 		CompressionStat.ExposeData(ref compressionData);
 		compressionData ??= [];
@@ -33,12 +33,12 @@ public class Settings : ModSettings
 		Listing_Standard ls = new();
 		ls.Begin(rect.LeftPart(0.45f));
 		RadioButton(ls, CompFormat.zstd,
-			"SFC.Config.CompressionType.zstd", "SFC.Config.CompressionType.zstd_Tip");
+			"SFC.Config.CompressionFormat.zstd", "SFC.Config.CompressionFormat.zstd_Tip");
 		RadioButton(ls, CompFormat.Gzip,
-			"SFC.Config.CompressionType.Gzip", "SFC.Config.CompressionType.Gzip_Tip");
+			"SFC.Config.CompressionFormat.Gzip", "SFC.Config.CompressionFormat.Gzip_Tip");
 		RadioButton(ls, CompFormat.None,
-			"SFC.Config.CompressionType.None", "SFC.Config.CompressionType.None_Tip");
-		if (compressionType != CompFormat.None)
+			"SFC.Config.CompressionFormat.None", "SFC.Config.CompressionFormat.None_Tip");
+		if (compressionFormat != CompFormat.None)
 			Slider(ls);
 		ls.CheckboxLabeled("SFC.Config.ShowStats".Translate(), ref showStats);
 		ls.CheckboxLabeled("SFC.Config.ShowDebugMsg".Translate(), ref showDebugMsg);
@@ -46,17 +46,20 @@ public class Settings : ModSettings
 	}
 
 	public void RadioButton(Listing_Standard ls,
-		CompFormat newType,
+		CompFormat newFormat,
 		string labelKey, string tipKey)
 	{
 #if v1_2
 		if (ls.RadioButton_NewTemp(labelKey.Translate().ToString(),
-			compressionType == newType, tooltip: tipKey.Translate().ToString()))
+			compressionFormat == newFormat, tooltip: tipKey.Translate().ToString()))
 #else
 		if (ls.RadioButton(labelKey.Translate().ToString(),
-			compressionType == newType, tooltip: tipKey.Translate().ToString()))
+			compressionFormat == newFormat, tooltip: tipKey.Translate().ToString()))
 #endif
-			compressionType = newType;
+		{
+			compressionFormat = newFormat;
+			CompressionLevel = DefaultLevel;
+		}
 	}
 
 	public void Slider(Listing_Standard ls)
@@ -73,21 +76,27 @@ public class Settings : ModSettings
 #endif
 	}
 
-	public int MinLevel => compressionType switch
+	public int MinLevel => compressionFormat switch
 	{
-		CompFormat.zstd => -7,
+		CompFormat.zstd => 1,
 		_ => 0,
 	};
 
-	public int MaxLevel => compressionType switch
+	public int MaxLevel => compressionFormat switch
 	{
-		CompFormat.zstd => 22,
+		CompFormat.zstd => 17,
+		_ => 1,
+	};
+
+	public int DefaultLevel => compressionFormat switch
+	{
+		CompFormat.zstd => 11,
 		_ => 1,
 	};
 
 	public int CompressionLevel
 	{
 		get => Mathf.RoundToInt(Mathf.Lerp(MinLevel, MaxLevel, Mathf.Clamp01(compressionFrac)));
-		set => compressionFrac = Mathf.Clamp01(Mathf.InverseLerp(MinLevel, MaxLevel, (float)value));
+		set => compressionFrac = Mathf.Clamp01(Mathf.InverseLerp(MinLevel, MaxLevel, value));
 	}
 }

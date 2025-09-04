@@ -36,50 +36,25 @@ public static class Dialog_FileList_DrawDateAndVersion
 		Text.Anchor = TextAnchor.UpperRight;
 		GUI.color = SaveFileInfo.UnimportantTextColor;
 
-		string path = sfi.FileInfo.FullName;
-		bool hasFileInfo = SaveFileCompression.settings.compressionData
-			.TryGetValue(path, out CompressionStat stat);
-		CompFormat type = Decompress.GetType(path);
+		CompressionStat stat = new(sfi.FileInfo.FullName);
 
 		string labelText;
-		if (type == CompFormat.None)
+		if (stat.CompressionFormat == CompFormat.None)
 		{
 			labelText = "SFC.Info.Uncompressed".Translate();
 		}
 		else
 		{
 			labelText = "SFC.Info.Compressed".Translate(
-				new NamedArgument(type.ToString(), "CompressionType"),
-				new NamedArgument(hasFileInfo
-					? stat.CompressionPercentage
-					: "?%", "CompressionPercentage")
+				new NamedArgument(stat.CompressionFormat, nameof(stat.CompressionFormat)),
+				new NamedArgument(stat.CompressionPercentage, nameof(stat.CompressionPercentage))
 			);
 		}
 		Rect rect2 = new(0f, 2f, rect.width, rect.height / 2f);
 		Widgets.Label(rect2, labelText);
 
-		if (type == CompFormat.None)
-		{
-			labelText = "SFC.Info.Length.Uncompressed".Translate(
-				new NamedArgument(
-					(sfi.FileInfo.Length / 1048576f).ToString("F2"),
-					"UnCompressedSize")
-			);
-		}
-		else if (!hasFileInfo)
-		{
-			labelText = "SFC.Info.Length.Unknown".Translate(
-				new NamedArgument(
-					(sfi.FileInfo.Length / 1048576f).ToString("F2"),
-					"CompressedSize")
-			);
-		}
-		else
-		{
-			labelText = stat.DescriptionShort;
-		}
 		Rect rect3 = new(0f, rect2.yMax, rect.width, rect.height / 2f);
-		Widgets.Label(rect3, labelText);
+		Widgets.Label(rect3, stat.DescriptionShort);
 #if v1_2
 		GUI.EndGroup();
 #else

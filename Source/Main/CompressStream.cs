@@ -6,14 +6,16 @@ using ZstdSharp;
 
 namespace SaveFileCompression;
 
-// A wrapper for all the supported compression types (currently only GZip and zstd)
-// Takes care of selecting the compression type, level, and all the normal stream stuff
-// Only does compression, and decompression is by picking the exact decompressor class matching the stream
+/// <summary>
+/// A wrapper for all the supported compression types (currently only GZip and zstd).
+/// Takes care of selecting the compression type, level, and all the normal stream stuff.
+/// Only does compression, and decompression is by picking the exact decompressor class matching the stream.
+/// </summary>
 public class CompressStream : Stream
 {
 	private readonly Stream _baseStream;
 	private readonly Stream _compStream;
-	public CompFormat CompressionType { get; }
+	public CompFormat CompressionFormat { get; }
 	public string FilePath { get; }
 
 	public CompressStream(string filePath)
@@ -22,20 +24,20 @@ public class CompressStream : Stream
 
 	public CompressStream(Stream sourceStream, string filePath)
 		: this(sourceStream, filePath,
-			  SaveFileCompression.settings.compressionType,
+			  SaveFileCompression.settings.compressionFormat,
 			  SaveFileCompression.settings.CompressionLevel)
 	{ }
 
-	public CompressStream(Stream sourceStream, string filePath, CompFormat compressionType, int level = 1)
+	public CompressStream(Stream sourceStream, string filePath, CompFormat compressionFormat, int level = 1)
 	{
 		// Verse.SafeSaver.NewFileSuffix
 		if (filePath.EndsWith(".new"))
 			FilePath = filePath.Substring(0, filePath.Length - 4);
 		else
 			FilePath = filePath;
-		CompressionType = compressionType;
+		CompressionFormat = compressionFormat;
 		_baseStream = sourceStream;
-		_compStream = compressionType switch
+		_compStream = compressionFormat switch
 		{
 			CompFormat.zstd => new CompressionStream(
 				_baseStream, level, leaveOpen: false),
@@ -70,12 +72,12 @@ public class CompressStream : Stream
 		_baseStream.Flush();
 		if (!FilePath.NullOrEmpty())
 		{
-			CompressionStat stat = new(CompressionType, UncompressedSize, CompressedSize);
+			CompressionStat stat = new(CompressionFormat, UncompressedSize, CompressedSize);
 			SaveFileCompression.settings.compressionData[FilePath] = stat;
 			SaveFileCompression.settings.compressionDataDirty = true;
 			Debug.Message("SFC.Log.SavedFile".Translate(
-				new NamedArgument(FilePath, nameof(FilePath)),
-				new NamedArgument(stat.Description, nameof(stat.Description))
+				new(FilePath, nameof(FilePath)),
+				new(stat.Description, nameof(stat.Description))
 			));
 		}
 		_compStream.Close();
