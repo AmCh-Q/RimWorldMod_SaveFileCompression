@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<!-- Framework properties
+		https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#framework-properties -->
+		<TargetFramework>net472</TargetFramework>
+		<AssemblyName>SaveFileCompression_Common</AssemblyName>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43" />
+		<PackageReference Include="ZstdSharp.Port" Version="0.8.6" />
+		<Compile Remove="**" />
+		<EmbeddedResource Remove="**" />
+		<None Remove="**" />
+	</ItemGroup>
+	<!-- ILRepack -->
+	<Target Name="ILRepacker" AfterTargets="Build" >
+		<ItemGroup>
+			<InputAssemblies Include="$(OutDir)\*.dll" Exclude="$(OutDir)\$(AssemblyName).dll" />
+			<DoNotInternalizeAssemblies Include="ZstdSharp" />
+		</ItemGroup>
+		<ILRepack
+			Parallel="true"
+			Internalize="true"
+			InternalizeExclude="@(DoNotInternalizeAssemblies)"
+			DebugInfo="true"
+			Wildcards="true"
+			TargetKind="Dll"
+			AllowDuplicateResources = "false"
+			InputAssemblies="@(InputAssemblies)"
+			LibraryPath="@(LibraryPath)"
+			OutputFile="..\$(MSBuildProjectName)\Assemblies\$(AssemblyName).dll"
+		/>
+	</Target>
+	<!-- /ILRepack -->
+</Project>

@@ -6,6 +6,14 @@ using Verse;
 
 namespace SaveFileCompression;
 
+public enum CompFormat
+{
+	Invalid,
+	None,
+	Gzip,
+	zstd
+}
+
 // A struct to help keep track of the compression space performance
 // This is not actually needed for the mod to function
 // but it does provide numbers for user to look at
@@ -55,9 +63,9 @@ public struct CompressionStat : IExposable
 	// For use to save the data
 	public void ExposeData()
 	{
-		Scribe_Values.Look(ref compressionFormat, nameof(compressionFormat), CompFormat.None);
-		Scribe_Values.Look(ref unCompressedSize, nameof(unCompressedSize), 0);
-		Scribe_Values.Look(ref compressedSize, nameof(compressedSize), 0);
+		Scribe_Values.Look(ref compressionFormat, nameof(compressionFormat), CompFormat.Invalid);
+		Scribe_Values.Look(ref unCompressedSize, nameof(unCompressedSize), -1);
+		Scribe_Values.Look(ref compressedSize, nameof(compressedSize), -1);
 	}
 
 	// Saving a dictionary of these data to the settings file
@@ -89,10 +97,12 @@ public struct CompressionStat : IExposable
 	public CompressionStat(string filePath, bool verify = false,
 		Dictionary<string, CompressionStat>? compressionData = null)
 	{
-
 		compressionData ??= SaveFileCompression.settings.compressionData;
-		if (compressionData.TryGetValue(filePath, out this) && !verify)
+		if (compressionData.TryGetValue(filePath, out this)
+			&& !verify && compressionFormat != CompFormat.Invalid)
+		{
 			return;
+		}
 
 		if (!File.Exists(filePath))
 		{

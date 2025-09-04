@@ -9,14 +9,17 @@
 		<DefineConstants>$(DefineConstants);v1_4;</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.4.3901" />
+		<PackageReference Include="Lib.Harmony" Version="2.2.2" ExcludeAssets="runtime" />
+		<ProjectReference Include="Common.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
+		<Reference Include="SaveFileCompression_Common">
+			<HintPath>..\Common\Assemblies\SaveFileCompression_Common.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 		<Compile Remove="obj\**" />
 		<EmbeddedResource Remove="obj\**" />
 		<None Remove="obj\**" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43" />
-		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.4.3901" />
-		<PackageReference Include="Lib.Harmony" Version="2.2.2" ExcludeAssets="runtime" />
-		<PackageReference Include="ZstdSharp.Port" Version="0.8.6" PrivateAssets="all" />
 	</ItemGroup>
 </Project>

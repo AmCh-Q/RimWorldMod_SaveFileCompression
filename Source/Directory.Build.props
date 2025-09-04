@@ -23,7 +23,7 @@ Additionally, the property BaseIntermediateOutputPath has to be set here, explan
 		https://learn.microsoft.com/en-us/visualstudio/msbuild/common-msbuild-project-properties -->
 		<RootNamespace>SaveFileCompression</RootNamespace>
 		<AssemblyName>Save File Compression</AssemblyName>
-		<OutDir>bin\$(MSBuildProjectName)</OutDir>
+		<OutDir Condition=" '$(MSBuildProjectName)' != 'Common' ">..\$(MSBuildProjectName)\Assemblies</OutDir>
 		<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
 		<ErrorReport>prompt</ErrorReport>
 		<!-- Assembly attribute properties
@@ -38,7 +38,7 @@ Additionally, the property BaseIntermediateOutputPath has to be set here, explan
 		<!-- Language options
 		https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/language -->
 		<DefineConstants Condition=" '$(Configuration)' == 'Debug' ">$(DefineConstants);DEBUG</DefineConstants>
-		<LangVersion>latestMajor</LangVersion>
+		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<!-- Output options
 		https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/output -->
