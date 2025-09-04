@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <SFC.Name>存档文件压缩</SFC.Name>
+  <SFC.CompressionStat.DescriptionUncompressed>{UnCompressedSize} MiB</SFC.CompressionStat.DescriptionUncompressed>
   <SFC.CompressionStat.DescriptionShort>{CompressedSize}/{UnCompressedSize} MiB</SFC.CompressionStat.DescriptionShort>
-  <SFC.CompressionStat.Description>{CompressedSize}/{UnCompressedSize} 字节（{CompressionPercentage}，压缩率：{CompressionRatio}，压缩格式：{CompressionType}）</SFC.CompressionStat.Description>
+  <SFC.CompressionStat.Description>{CompressedSize}/{UnCompressedSize} 字节（{CompressionPercentage}，压缩率：{CompressionRatio}，压缩格式：{CompressionFormat}）</SFC.CompressionStat.Description>
   <SFC.Config.ShowStats>在存档页面显示文件信息</SFC.Config.ShowStats>
   <SFC.Config.ShowDebugMsg>显示详细DEBUG记录</SFC.Config.ShowDebugMsg>
 
-  <SFC.Config.CompressionType.zstd>使用Zstandard格式压缩</SFC.Config.CompressionType.zstd>
-  <SFC.Config.CompressionType.zstd_Tip>Zstandard (zst,zstd) 格式压缩的速度和压缩率都非常高。\n缺点是作为新的压缩算法，目前第三方软件支持很少。\n可以使用7-Zip-zstd（通常的7-Zip不行）或者PeaZip来手动解压存档文件。\n可以在-7到22档位之间设置（档位越高，压缩率越高，速度越慢，默认11，不推荐0以下和20以上的档位）。</SFC.Config.CompressionType.zstd_Tip>
-  <SFC.Config.CompressionType.Gzip>使用Gzip格式压缩</SFC.Config.CompressionType.Gzip>
-  <SFC.Config.CompressionType.Gzip_Tip>Gzip格式在压缩效率和速度都可接受的情况下兼容性非常好。可以设置为档位0（速度优先）或者1（压缩率优先，默认）。绝大多数解压程序都可以解压Gzip，且部分文本编辑软件(例如Kate)可以直接打开并编辑Gzip格式压缩了的存档。</SFC.Config.CompressionType.Gzip_Tip>
-  <SFC.Config.CompressionType.None>不压缩游戏存档</SFC.Config.CompressionType.None>
-  <SFC.Config.CompressionType.None_Tip>关闭这个模组的存档压缩功能，使用原版游戏正常的XML文本存档格式。虽然存档文件大很多，但可以用文本编辑器直接修改存档。</SFC.Config.CompressionType.None_Tip>
+  <SFC.Config.CompressionFormat.zstd>使用Zstandard格式压缩</SFC.Config.CompressionFormat.zstd>
+  <SFC.Config.CompressionFormat.zstd_Tip>Zstandard (zst,zstd) 格式压缩的速度和压缩率都非常高。\n缺点是作为新的压缩算法，目前第三方软件支持很少。\n可以使用7-Zip-zstd（通常的7-Zip不行）或者PeaZip来手动解压存档文件。\n可以在1到17档位之间设置（档位越高，压缩率越高，速度越慢，默认11）。</SFC.Config.CompressionFormat.zstd_Tip>
+  <SFC.Config.CompressionFormat.Gzip>使用Gzip格式压缩</SFC.Config.CompressionFormat.Gzip>
+  <SFC.Config.CompressionFormat.Gzip_Tip>Gzip格式在压缩效率和速度都可接受的情况下兼容性非常好。可以设置为档位0（速度优先）或者1（压缩率优先，默认）。绝大多数解压程序都可以解压Gzip，且部分文本编辑软件(例如Kate)可以直接打开并编辑Gzip格式压缩了的存档。</SFC.Config.CompressionFormat.Gzip_Tip>
+  <SFC.Config.CompressionFormat.None>不压缩游戏存档</SFC.Config.CompressionFormat.None>
+  <SFC.Config.CompressionFormat.None_Tip>关闭这个模组的存档压缩功能，使用原版游戏正常的XML文本存档格式。虽然存档文件大很多，但可以用文本编辑器直接修改存档。</SFC.Config.CompressionType.None_Tip>
   <SFC.Config.CompressionLevel>压缩档位：{CompressionLevel}</SFC.Config.CompressionLevel>
   <SFC.Info.Uncompressed>未压缩</SFC.Info.Uncompressed>
-  <SFC.Info.Compressed>使用{CompressionType}格式压缩 ({CompressionPercentage})</SFC.Info.Compressed>
-  <SFC.Info.Length.Uncompressed>{UnCompressedSize} MiB</SFC.Info.Length.Uncompressed>
-  <SFC.Info.Length.Unknown>{CompressedSize}/? MiB</SFC.Info.Length.Unknown>
+  <SFC.Info.Compressed>使用{CompressionFormat}格式压缩 ({CompressionPercentage})</SFC.Info.Compressed>
 
   <SFC.Log.SavedFile>已保存至{FilePath}：{Description}</SFC.Log.SavedFile>
 </LanguageData>
