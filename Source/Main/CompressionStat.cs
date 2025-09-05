@@ -13,7 +13,6 @@ public enum CompFormat
 	None,
 	Gzip,
 	zstd,
-	Zlib,
 	Deflate,
 }
 
@@ -126,8 +125,6 @@ public struct CompressionStat : IExposable
 			compressionFormat = CompFormat.zstd; // header for zstd
 		else if (CheckHeader(buffer, bytesRead, 0x1F, 0x8B, 0x08))
 			compressionFormat = CompFormat.Gzip; // header for Gzip
-		else if (bytesRead >= 2 && buffer[0] == 0x78 && buffer[1] is 0x01 or 0x5E or 0x9C or 0xDA)
-			compressionFormat = CompFormat.Zlib; // header for Zlib
 		else // Unknown format from header
 		{
 			fs.Seek(0, SeekOrigin.Begin);
@@ -147,6 +144,8 @@ public struct CompressionStat : IExposable
 				compressionFormat = CompFormat.None;
 			}
 		}
+		Debug.Message("File [", filePath,
+			"] is found to be of format", compressionFormat.ToString());
 #pragma warning restore IDE0011 // Add braces
 
 		compressedSize = new FileInfo(filePath).Length;

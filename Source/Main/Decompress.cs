@@ -22,6 +22,7 @@ public static class Decompress
 			{
 				CompFormat.Gzip => new GZipStream(fileStream, CompressionMode.Decompress, leaveOpen: false),
 				CompFormat.zstd => new DecompressionStream(fileStream, leaveOpen: false),
+				CompFormat.Deflate => new DeflateStream(fileStream, CompressionMode.Decompress, leaveOpen: false),
 				_ => fileStream,
 			};
 			// These lines below cannot be removed! They are for the finally block
