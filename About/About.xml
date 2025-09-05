@@ -3,9 +3,10 @@
   <packageId>AmCh.SaveFileCompression</packageId>
   <name>Save File Compression</name>
   <author>AmCh</author>
-  <modVersion IgnoreIfNoMatchingField="True">0.1.3</modVersion>
+  <modVersion IgnoreIfNoMatchingField="True">1.0.0</modVersion>
   <!--
-    <modIconPath IgnoreIfNoMatchingField="True">SaveFileCompression/ModIcon</modIconPath>
+  <steamAppId></steamAppId>
+  <modIconPath IgnoreIfNoMatchingField="True">SaveFileCompression/ModIcon</modIconPath>
   -->
   <url>https://github.com/AmCh-Q/RimWorldMod_SaveFileCompression</url>
   <supportedVersions>
@@ -16,7 +17,12 @@
     <li>1.6</li>
   </supportedVersions>
   <description>
-SaveFileCompression
+Uses compression to save your game.
+保存游戏时将存档打包压缩。
+Vanilla's game save files are stored in plain text, this means that manually editing your save file is easy, but the save files can get to hundred(s) of Megabytes in size.
+原版游戏存档都以文本保存，这样你手动编辑存档很容易，但也导致游戏存档可以达到上亿字节大小。
+With this mod, the sizes get significantly shrunk to anywhere from 20% to 5% of the size of vanilla, saving your hard drive space. It can also speed up your saving process in some computers.
+这个模组把你的存档压缩到20%到5%左右的大小，减少硬盘占用，也可以在一部分电脑里加快保存游戏的速度。
   </description>
   <modDependencies>
     <li>
