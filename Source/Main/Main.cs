@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEngine;
 using Verse;
 
-[assembly: AssemblyVersionAttribute("0.1.2.0")]
+[assembly: AssemblyVersionAttribute("0.1.3.0")]
 
 namespace SaveFileCompression;
 
