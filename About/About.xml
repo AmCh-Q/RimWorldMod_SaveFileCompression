@@ -4,10 +4,8 @@
   <name>Save File Compression</name>
   <author>AmCh</author>
   <modVersion IgnoreIfNoMatchingField="True">1.0.0</modVersion>
-  <!--
-  <steamAppId></steamAppId>
   <modIconPath IgnoreIfNoMatchingField="True">SaveFileCompression/ModIcon</modIconPath>
-  -->
+  <steamAppId>3562729067</steamAppId>
   <url>https://github.com/AmCh-Q/RimWorldMod_SaveFileCompression</url>
   <supportedVersions>
     <li>1.2</li>
