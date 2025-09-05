@@ -37,15 +37,20 @@ public class CompressStream : Stream
 			FilePath = filePath;
 		CompressionFormat = compressionFormat;
 		_baseStream = sourceStream;
-		_compStream = compressionFormat switch
+		switch (compressionFormat)
 		{
-			CompFormat.zstd => new CompressionStream(
-				_baseStream, level, leaveOpen: false),
-			CompFormat.Gzip => new GZipStream(
-				_baseStream, level > 0
-				? CompressionLevel.Optimal : CompressionLevel.Fastest, leaveOpen: false),
-			_ => _baseStream,
-		};
+			case CompFormat.zstd:
+				_compStream = new CompressionStream(_baseStream, level, leaveOpen: false);
+				break;
+			case CompFormat.Gzip:
+				_compStream = new GZipStream(_baseStream, level > 0
+				? CompressionLevel.Optimal : CompressionLevel.Fastest, leaveOpen: false);
+				break;
+			default:
+				_compStream = _baseStream;
+				CompressionFormat = CompFormat.None;
+				break;
+		}
 		UncompressedSize = 0;
 	}
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Verse;
 
@@ -11,7 +12,9 @@ public enum CompFormat
 	Invalid,
 	None,
 	Gzip,
-	zstd
+	zstd,
+	Zlib,
+	Deflate,
 }
 
 // A struct to help keep track of the compression space performance
@@ -110,28 +113,41 @@ public struct CompressionStat : IExposable
 			return;
 		}
 
-		byte[] buffer = new byte[4];
+#pragma warning disable IDE0011 // Add braces
+		// We need only 8 bytes to access the headers
+		byte[] buffer = new byte[8];
 		using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
-		int bytesRead = fs.Read(buffer, 0, 4);
-		if (bytesRead >= 3 &&
-			buffer[0] == 0x1F &&
-			buffer[1] == 0x8B &&
-			buffer[2] == 0x08) // header for Gzip
+		int bytesRead = fs.Read(buffer, 0, buffer.Length);
+		if (CheckHeader(buffer, bytesRead, 0xEF, 0xBB, 0xBF))
+			compressionFormat = CompFormat.None; // header for BOM (plain text)
+		else if (CheckHeader(buffer, bytesRead, 0x3C, 0x3F, 0x78, 0x6D, 0x6C))
+			compressionFormat = CompFormat.None; // header for xml (without BOM)
+		else if (CheckHeader(buffer, bytesRead, 0x28, 0xB5, 0x2F, 0xFD))
+			compressionFormat = CompFormat.zstd; // header for zstd
+		else if (CheckHeader(buffer, bytesRead, 0x1F, 0x8B, 0x08))
+			compressionFormat = CompFormat.Gzip; // header for Gzip
+		else if (bytesRead >= 2 && buffer[0] == 0x78 && buffer[1] is 0x01 or 0x5E or 0x9C or 0xDA)
+			compressionFormat = CompFormat.Zlib; // header for Zlib
+		else // Unknown format from header
 		{
-			compressionFormat = CompFormat.Gzip;
+			fs.Seek(0, SeekOrigin.Begin);
+			try
+			{
+				// If DeflateStream can decompress it, it's probably deflate
+				using DeflateStream deflateStream
+					= new(fs, CompressionMode.Decompress, leaveOpen: true);
+				int bytesDecompressed = deflateStream.Read(buffer, 0, buffer.Length);
+				if (bytesDecompressed > 0)
+					compressionFormat = CompFormat.Deflate;
+				else
+					compressionFormat = CompFormat.None;
+			}
+			catch (InvalidDataException) // Error using DeflateStream, assume plain text
+			{
+				compressionFormat = CompFormat.None;
+			}
 		}
-		else if (bytesRead >= 4 &&
-			buffer[0] == 0x28 &&
-			buffer[1] == 0xB5 &&
-			buffer[2] == 0x2F &&
-			buffer[3] == 0xFD) // header for zstd
-		{
-			compressionFormat = CompFormat.zstd;
-		}
-		else
-		{
-			compressionFormat = CompFormat.None;
-		}
+#pragma warning restore IDE0011 // Add braces
 
 		compressedSize = new FileInfo(filePath).Length;
 		switch (compressionFormat)
@@ -139,16 +155,28 @@ public struct CompressionStat : IExposable
 			case CompFormat.None:
 				unCompressedSize = compressedSize;
 				break;
-			case CompFormat.Gzip when bytesRead >= 18:
+			case CompFormat.Gzip when bytesRead >= 8:
 				fs.Seek(-4, SeekOrigin.End);
 				bytesRead = fs.Read(buffer, 0, 4);
 				if (bytesRead >= 4)
 					unCompressedSize = BitConverter.ToUInt32(buffer, 0);
 				break;
-			default:
+			default: // In other cases we don't know the size of the unCompressed data
 				break;
 		}
 
 		compressionData[filePath] = this;
+	}
+
+	public static bool CheckHeader(byte[] header, int readLength, params int[] bytes)
+	{
+		if (bytes.Length > readLength)
+			return false;
+		for (int i = 0; i < bytes.Length; i++)
+		{
+			if (header[i] != bytes[i])
+				return false;
+		}
+		return true;
 	}
 }
