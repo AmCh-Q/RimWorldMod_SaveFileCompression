@@ -7,7 +7,7 @@ namespace SaveFileCompression;
 public class Settings : ModSettings
 {
 	private const CompFormat dflt_compressionFormat = CompFormat.zstd;
-	private const float dflt_compressionFrac = (11f - 1f) / (17f - 1f);
+	private const float dflt_compressionFrac = (9f - 1f) / (17f - 1f);
 
 	public CompFormat compressionFormat = dflt_compressionFormat;
 	public float compressionFrac = dflt_compressionFrac;
@@ -90,7 +90,7 @@ public class Settings : ModSettings
 
 	public int DefaultLevel => compressionFormat switch
 	{
-		CompFormat.zstd => 11,
+		CompFormat.zstd => 9,
 		_ => 1,
 	};
 
