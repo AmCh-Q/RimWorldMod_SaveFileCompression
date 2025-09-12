@@ -3,6 +3,7 @@ using System.Reflection;
 using Verse;
 
 namespace SaveFileCompression.Patches;
+
 public static class ScribeMetaHeaderUtility_GameVersionOf
 {
 	public static readonly MethodInfo original =
@@ -15,6 +16,6 @@ public static class ScribeMetaHeaderUtility_GameVersionOf
 			prefix: Watch.h_Prefix,
 			postfix: Watch.h_Postfix_fileInfo,
 			transpiler: Replacer.h_StreamReader);
-		Debug.Message("Patched ", original.Name);
+		Debug.Information(() => $"Patched {original.Name}");
 	}
 }

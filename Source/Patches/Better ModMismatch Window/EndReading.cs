@@ -23,7 +23,7 @@ public static class EndReading
 		HarmonyMethod transpiler = new(
 			typeof(EndReading).GetMethod(nameof(Transpiler)));
 		harmony.Patch(original, transpiler: transpiler);
-		Debug.Message("Patched ", original.Name);
+		Debug.Information(() => $"Patched {original.Name}");
 	}
 
 	public static IEnumerable<CodeInstruction> Transpiler(

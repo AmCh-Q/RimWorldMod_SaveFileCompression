@@ -21,7 +21,7 @@ public static class ScribeLoader_InitLoading
 				prefix: Watch.h_Prefix,
 				postfix: Watch.h_Postfix_filePath,
 				transpiler: Replacer.h_StreamReader);
-			Debug.Message("Patched ", original.Name);
+			Debug.Information(() => $"Patched {original.Name}");
 		}
 	}
 }

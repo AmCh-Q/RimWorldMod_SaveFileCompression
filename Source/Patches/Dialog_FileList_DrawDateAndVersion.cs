@@ -18,7 +18,7 @@ public static class Dialog_FileList_DrawDateAndVersion
 		HarmonyMethod prefix = new(
 			typeof(Dialog_FileList_DrawDateAndVersion).GetMethod(nameof(Prefix)));
 		harmony.Patch(original, prefix: prefix);
-		Debug.Message("Patched ", original.Name);
+		Debug.Information(() => $"Patched {original.Name}");
 	}
 
 	public static void Prefix(SaveFileInfo sfi, Rect rect)
@@ -36,7 +36,7 @@ public static class Dialog_FileList_DrawDateAndVersion
 		Text.Anchor = TextAnchor.UpperRight;
 		GUI.color = SaveFileInfo.UnimportantTextColor;
 
-		CompressionStat stat = new(sfi.FileInfo.FullName);
+		CompressionStat stat = new(sfi.FileInfo.FullName, false);
 
 		string labelText;
 		if (stat.CompressionFormat == CompFormat.None)

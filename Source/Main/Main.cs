@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEngine;
 using Verse;
 
-[assembly: AssemblyVersionAttribute("1.0.0.0")]
+[assembly: AssemblyVersionAttribute("1.0.1.0")]
 
 namespace SaveFileCompression;
 
@@ -25,8 +25,10 @@ public partial class SaveFileCompression : Mod
 public static class PatchApplier
 {
 	public static readonly Harmony harmony = new(id: "AmCh.SaveFileCompression");
+
 	static PatchApplier()
 	{
+		Debug.Patch(harmony);
 		Patches.Dialog_FileList_DrawDateAndVersion.Patch(harmony);
 		Patches.ScribeLoader_InitLoading.Patch(harmony);
 		Patches.ScribeMetaHeaderUtility_GameVersionOf.Patch(harmony);

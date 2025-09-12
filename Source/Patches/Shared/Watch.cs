@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 
 namespace SaveFileCompression.Patches;
+
 public static class Watch
 {
 	public static HarmonyMethod
@@ -13,7 +14,7 @@ public static class Watch
 
 	public static void Prefix(out Stopwatch? __state)
 	{
-		__state = SaveFileCompression.settings.showDebugMsg ? new() : null;
+		__state = Debug.IsEnabled(LogLevel.Trace) ? new() : null;
 		__state?.Start();
 	}
 
@@ -22,8 +23,8 @@ public static class Watch
 		if (__state is not Stopwatch watch)
 			return;
 		watch.Stop();
-		Debug.Message("Timed [", __originalMethod.Name,
-			"], with FilePath: [", filePath, "]: ", watch.Elapsed.ToString());
+		Debug.Trace(()
+			=> $"Timed [{__originalMethod.Name}], with FilePath: [{filePath}]: {watch.Elapsed}");
 	}
 
 	public static void Postfix_fileInfo(Stopwatch? __state, MethodBase __originalMethod, FileInfo file)

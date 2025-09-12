@@ -19,18 +19,21 @@ public enum CompFormat
 // A struct to help keep track of the compression space performance
 // This is not actually needed for the mod to function
 // but it does provide numbers for user to look at
-public struct CompressionStat : IExposable
+public struct CompressionStat : IExposable, IEquatable<CompressionStat>
 {
 	private CompFormat compressionFormat;
 	private long unCompressedSize;
 	private long compressedSize;
 	public readonly CompFormat CompressionFormat => compressionFormat;
 	public readonly long UnCompressedSize => unCompressedSize;
+
 	public readonly NamedArgument UnCompressedSizeArg
 		=> new(UnCompressedSize > 0
 			? (UnCompressedSize / 1048576f).ToString("F2")
 			: "?", nameof(UnCompressedSize));
+
 	public readonly long CompressedSize => compressedSize;
+
 	public readonly NamedArgument CompressedSizeArg
 		=> new(CompressedSize > 0
 			? (CompressedSize / 1048576f).ToString("F2")
@@ -54,13 +57,13 @@ public struct CompressionStat : IExposable
 		}
 	}
 
-	public readonly string Description
-		=> "SFC.CompressionStat.Description".Translate(
-			new(CompressedSize, nameof(CompressedSize)),
-			new(UnCompressedSize, nameof(UnCompressedSize)),
-			new(CompressionPercentage, nameof(CompressionPercentage)),
-			new(CompressionRatio, nameof(CompressionRatio)),
-			new(CompressionFormat, nameof(CompressionFormat)));
+	public readonly string Description => string.Concat([
+		nameof(CompressedSize), ": ", CompressedSize.ToString(), ", ",
+		nameof(UnCompressedSize), ": ", UnCompressedSize.ToString(), ", ",
+		nameof(CompressionPercentage), ": ", CompressionPercentage, ", ",
+		nameof(CompressionRatio), ": ", CompressionRatio.ToString(), ", ",
+		nameof(CompressionFormat), ": ", CompressionFormat.ToString(), ", ",
+	]);
 
 	// For use to save the data
 	public void ExposeData()
@@ -84,6 +87,7 @@ public struct CompressionStat : IExposable
 			}
 		}
 		Scribe_Collections.Look(ref compressionData, nameof(compressionData));
+		compressionData ??= [];
 	}
 
 	public CompressionStat(
@@ -96,19 +100,21 @@ public struct CompressionStat : IExposable
 		this.compressedSize = compressedSize;
 	}
 
-	public CompressionStat(string filePath, bool verify = false,
-		Dictionary<string, CompressionStat>? compressionData = null)
+	public CompressionStat(string filePath, bool verify)
 	{
-		compressionData ??= SaveFileCompression.settings.compressionData;
-		if (compressionData.TryGetValue(filePath, out this)
-			&& !verify && compressionFormat != CompFormat.Invalid)
+		lock (SaveFileCompression.settings.compressionDataLock)
 		{
-			return;
+			if (SaveFileCompression.settings.compressionData
+				.TryGetValue(filePath, out this) && !verify
+				&& compressionFormat != CompFormat.Invalid)
+			{
+				return;
+			}
 		}
 
 		if (!File.Exists(filePath))
 		{
-			Debug.Error("File not found: ", filePath);
+			Debug.Error(() => $"File not found: {filePath}");
 			return;
 		}
 
@@ -144,8 +150,6 @@ public struct CompressionStat : IExposable
 				compressionFormat = CompFormat.None;
 			}
 		}
-		Debug.Message("File [", filePath,
-			"] is found to be of format", compressionFormat.ToString());
 #pragma warning restore IDE0011 // Add braces
 
 		compressedSize = new FileInfo(filePath).Length;
@@ -154,17 +158,29 @@ public struct CompressionStat : IExposable
 			case CompFormat.None:
 				unCompressedSize = compressedSize;
 				break;
+
 			case CompFormat.Gzip when bytesRead >= 8:
 				fs.Seek(-4, SeekOrigin.End);
 				bytesRead = fs.Read(buffer, 0, 4);
 				if (bytesRead >= 4)
 					unCompressedSize = BitConverter.ToUInt32(buffer, 0);
 				break;
+
 			default: // In other cases we don't know the size of the unCompressed data
 				break;
 		}
 
-		compressionData[filePath] = this;
+		CompressionStat @this = this;
+		Debug.Trace(() => $"File [{filePath}] is found to be: {@this.Description}");
+		lock (SaveFileCompression.settings.compressionDataLock)
+			SaveFileCompression.settings.compressionData[filePath] = this;
+	}
+
+	public readonly bool Equals(CompressionStat other)
+	{
+		return compressionFormat == other.compressionFormat
+			&& compressedSize == other.compressedSize
+			&& unCompressedSize == other.unCompressedSize;
 	}
 
 	public static bool CheckHeader(byte[] header, int readLength, params int[] bytes)
@@ -178,4 +194,16 @@ public struct CompressionStat : IExposable
 		}
 		return true;
 	}
+
+	public override readonly bool Equals(object obj)
+		=> obj is CompressionStat stat && Equals(stat);
+
+	public static bool operator ==(CompressionStat left, CompressionStat right)
+		=> left.Equals(right);
+
+	public static bool operator !=(CompressionStat left, CompressionStat right)
+		=> !(left == right);
+
+	public override readonly int GetHashCode()
+		=> throw new NotImplementedException();
 }

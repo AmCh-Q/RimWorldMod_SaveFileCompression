@@ -16,7 +16,7 @@ public static class ScribeSaver_FinalizeSaving
 		HarmonyMethod finalizer = new(
 			typeof(ScribeSaver_FinalizeSaving).GetMethod(nameof(Finalizer)));
 		harmony.Patch(original, finalizer: finalizer);
-		Debug.Message("Patched ", original.Name);
+		Debug.Information(() => $"Patched {original.Name}");
 	}
 
 	public static void Finalizer()
@@ -24,12 +24,12 @@ public static class ScribeSaver_FinalizeSaving
 		Settings settings = SaveFileCompression.settings;
 		if (settings.compressionDataDirty)
 		{
-			Debug.Message("Writing settings");
+			Debug.Information("Saving game, writing mod settings");
 			settings.Write();
 		}
 		else
 		{
-			Debug.Message("Not writing settings");
+			Debug.Trace("Saving non-game, would not rewrite mod settings");
 		}
 	}
 }

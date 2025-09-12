@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.IO.Compression;
-using System.Runtime.InteropServices.ComTypes;
 using ZstdSharp;
 
 namespace SaveFileCompression;
@@ -11,12 +10,12 @@ namespace SaveFileCompression;
 /// </summary>
 public static class Decompress
 {
-	public static Stream Stream(string filePath)
+	public static Stream Stream(string filePath, bool verify)
 	{
 		FileStream? fileStream = null;
 		try
 		{
-			CompressionStat stat = new(filePath, true);
+			CompressionStat stat = new(filePath, verify);
 			fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 			Stream stream = stat.CompressionFormat switch
 			{
@@ -38,5 +37,5 @@ public static class Decompress
 	}
 
 	public static StreamReader StreamReader(string filePath)
-		=> new(Stream(filePath));
+		=> new(Stream(filePath, true));
 }

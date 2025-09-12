@@ -1,9 +1,9 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 namespace SaveFileCompression.Patches;
+
 public static class Replacer
 {
 	public static readonly HarmonyMethod h_StreamReader

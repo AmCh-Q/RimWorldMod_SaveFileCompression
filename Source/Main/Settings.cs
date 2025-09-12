@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -8,22 +9,25 @@ public class Settings : ModSettings
 {
 	private const CompFormat dflt_compressionFormat = CompFormat.zstd;
 	private const float dflt_compressionFrac = (9f - 1f) / (17f - 1f);
+	private const bool dflt_showStats = true;
+	private const LogLevel dflt_loglevel = LogLevel.Critical;
 
 	public CompFormat compressionFormat = dflt_compressionFormat;
 	public float compressionFrac = dflt_compressionFrac;
+	public bool showStats = dflt_showStats;
 
-	public Dictionary<string, CompressionStat> compressionData = [];
+	internal Dictionary<string, CompressionStat> compressionData = [];
+	internal readonly object compressionDataLock = new();
 	public bool compressionDataDirty = false;
-
-	public bool showStats = true;
-	public bool showDebugMsg = false;
 
 	public override void ExposeData()
 	{
 		Scribe_Values.Look(ref compressionFormat, nameof(compressionFormat), dflt_compressionFormat);
 		Scribe_Values.Look(ref compressionFrac, nameof(compressionFrac), dflt_compressionFrac);
-		CompressionStat.ExposeData(ref compressionData);
-		compressionData ??= [];
+		Scribe_Values.Look(ref showStats, nameof(showStats), dflt_showStats);
+		Scribe_Values.Look(ref Debug.logLevel, nameof(Debug.logLevel), dflt_loglevel);
+		lock (compressionDataLock)
+			CompressionStat.ExposeData(ref compressionData);
 		base.ExposeData();
 		compressionDataDirty = false;
 	}
@@ -32,32 +36,39 @@ public class Settings : ModSettings
 	{
 		Listing_Standard ls = new();
 		ls.Begin(rect.LeftPart(0.45f));
-		RadioButton(ls, CompFormat.zstd,
+		RadioButton(ls, ref compressionFormat, CompFormat.zstd,
 			"SFC.Config.CompressionFormat.zstd", "SFC.Config.CompressionFormat.zstd_Tip");
-		RadioButton(ls, CompFormat.Gzip,
+		RadioButton(ls, ref compressionFormat, CompFormat.Gzip,
 			"SFC.Config.CompressionFormat.Gzip", "SFC.Config.CompressionFormat.Gzip_Tip");
-		RadioButton(ls, CompFormat.None,
+		RadioButton(ls, ref compressionFormat, CompFormat.None,
 			"SFC.Config.CompressionFormat.None", "SFC.Config.CompressionFormat.None_Tip");
 		if (compressionFormat != CompFormat.None)
 			Slider(ls);
 		ls.CheckboxLabeled("SFC.Config.ShowStats".Translate(), ref showStats);
-		ls.CheckboxLabeled("SFC.Config.ShowDebugMsg".Translate(), ref showDebugMsg);
+		ls.Label("SFC.Config.LogLevel".Translate());
+		RadioButton(ls, ref Debug.logLevel, LogLevel.Off, "SFC.Config.LogLevel.Off");
+		RadioButton(ls, ref Debug.logLevel, LogLevel.Critical, "SFC.Config.LogLevel.Critical");
+		RadioButton(ls, ref Debug.logLevel, LogLevel.Error, "SFC.Config.LogLevel.Error");
+		RadioButton(ls, ref Debug.logLevel, LogLevel.Warning, "SFC.Config.LogLevel.Warning");
+		RadioButton(ls, ref Debug.logLevel, LogLevel.Information, "SFC.Config.LogLevel.Information");
+		RadioButton(ls, ref Debug.logLevel, LogLevel.Trace, "SFC.Config.LogLevel.Trace");
 		ls.End();
 	}
 
-	public void RadioButton(Listing_Standard ls,
-		CompFormat newFormat,
-		string labelKey, string tipKey)
+	public void RadioButton<T>(Listing_Standard ls,
+		ref T value, T select,
+		string labelKey, string? tipKey = null) where T : Enum
 	{
 #if v1_2
-		if (ls.RadioButton_NewTemp(labelKey.Translate().ToString(),
-			compressionFormat == newFormat, tooltip: tipKey.Translate().ToString()))
+		if (ls.RadioButton_NewTemp(
 #else
-		if (ls.RadioButton(labelKey.Translate().ToString(),
-			compressionFormat == newFormat, tooltip: tipKey.Translate().ToString()))
+		if (ls.RadioButton(
 #endif
+			labelKey.Translate().ToString(),
+			EqualityComparer<T>.Default.Equals(value, select),
+			tooltip: tipKey?.Translate().ToString()))
 		{
-			compressionFormat = newFormat;
+			value = select;
 			CompressionLevel = DefaultLevel;
 		}
 	}

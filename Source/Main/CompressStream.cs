@@ -18,6 +18,10 @@ public class CompressStream : Stream
 	public CompFormat CompressionFormat { get; }
 	public string FilePath { get; }
 
+	public long UncompressedSize { get; private set; }
+	public long CompressedSize => _baseStream.Position;
+	public float CompressionRatio => (float)CompressedSize / UncompressedSize;
+
 	public CompressStream(string filePath)
 		: this(new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None), filePath)
 	{ }
@@ -42,10 +46,12 @@ public class CompressStream : Stream
 			case CompFormat.zstd:
 				_compStream = new CompressionStream(_baseStream, level, leaveOpen: false);
 				break;
+
 			case CompFormat.Gzip:
 				_compStream = new GZipStream(_baseStream, level > 0
 				? CompressionLevel.Optimal : CompressionLevel.Fastest, leaveOpen: false);
 				break;
+
 			default:
 				_compStream = _baseStream;
 				CompressionFormat = CompFormat.None;
@@ -54,41 +60,52 @@ public class CompressStream : Stream
 		UncompressedSize = 0;
 	}
 
-	public long UncompressedSize { get; private set; }
-	public long CompressedSize => _baseStream.Position;
-	public float CompressionRatio => (float)CompressedSize / UncompressedSize;
-
 	public override void Write(byte[] buffer, int offset, int count)
 	{
 		_compStream.Write(buffer, offset, count);
 		UncompressedSize += count;
 	}
 
-	protected override void Dispose(bool disposing)
+	public void FlushAndSaveStat()
 	{
-		if (disposing)
-			_compStream.Dispose();
-		base.Dispose(disposing);
-	}
-
-	public override void Close()
-	{
-		Flush();
+		_compStream.Flush();
 		_baseStream.Flush();
-		if (!FilePath.NullOrEmpty())
+		if (FilePath.NullOrEmpty())
+			return;
+		CompressionStat stat = new(CompressionFormat, UncompressedSize, CompressedSize);
+		lock (SaveFileCompression.settings.compressionDataLock)
 		{
-			CompressionStat stat = new(CompressionFormat, UncompressedSize, CompressedSize);
-			SaveFileCompression.settings.compressionData[FilePath] = stat;
-			SaveFileCompression.settings.compressionDataDirty = true;
-			Debug.Message("SFC.Log.SavedFile".Translate(
-				new(FilePath, nameof(FilePath)),
-				new(stat.Description, nameof(stat.Description))
-			));
+			if (!SaveFileCompression.settings.compressionData
+				.TryGetValue(FilePath, out CompressionStat existing)
+				|| existing != stat)
+			{
+				SaveFileCompression.settings.compressionData[FilePath] = stat;
+				SaveFileCompression.settings.compressionDataDirty = true;
+			}
 		}
-		_compStream.Close();
+		Debug.Information(() => $"Saved [{FilePath}] : {stat.Description}");
 	}
 
 	public override void Flush() => _compStream.Flush();
+
+	protected override void Dispose(bool disposing)
+	{
+		Debug.Trace(() => $"Disposing: {disposing}");
+		if (!disposing)
+		{
+			base.Dispose(false);
+			return;
+		}
+		try
+		{
+			FlushAndSaveStat();
+		}
+		finally
+		{
+			_compStream.Dispose();
+		}
+		base.Dispose(true);
+	}
 
 	public override bool CanRead => false;
 	public override bool CanSeek => false;

@@ -24,7 +24,7 @@ public static class BeginReading
 		HarmonyMethod transpiler = new(
 			typeof(BeginReading).GetMethod(nameof(Transpiler)));
 		harmony.Patch(original, transpiler: transpiler);
-		Debug.Message("Patched ", original.Name);
+		Debug.Information(() => $"Patched {original.Name}");
 	}
 
 	public static IEnumerable<CodeInstruction> Transpiler(
@@ -44,7 +44,7 @@ public static class BeginReading
 
 	public static XDocument LoadDocumentFromPath(string filePath)
 	{
-		using Stream stream = Decompress.Stream(filePath);
+		using Stream stream = Decompress.Stream(filePath, true);
 		return XDocument.Load(stream);
 	}
 }

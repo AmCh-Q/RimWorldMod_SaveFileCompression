@@ -19,7 +19,7 @@ public static class ScribeSaver_InitSaving
 		HarmonyMethod transpiler = new(
 			typeof(ScribeSaver_InitSaving).GetMethod(nameof(Transpiler)));
 		harmony.Patch(original, transpiler: transpiler);
-		Debug.Message("Patched ", original.Name);
+		Debug.Information(() => $"Patched {original.Name}");
 	}
 
 	public static IEnumerable<CodeInstruction> Transpiler(
