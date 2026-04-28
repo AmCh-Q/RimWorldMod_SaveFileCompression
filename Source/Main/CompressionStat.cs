@@ -145,8 +145,9 @@ public struct CompressionStat : IExposable, IEquatable<CompressionStat>
 				else
 					compressionFormat = CompFormat.None;
 			}
-			catch (InvalidDataException) // Error using DeflateStream, assume plain text
+			catch (Exception e) when (e is InvalidDataException or IOException)
 			{
+				// Error using DeflateStream, assume plain text
 				compressionFormat = CompFormat.None;
 			}
 		}
