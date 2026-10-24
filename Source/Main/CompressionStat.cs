@@ -57,13 +57,13 @@ public struct CompressionStat : IExposable, IEquatable<CompressionStat>
 		}
 	}
 
-	public readonly string Description => string.Concat([
+	public readonly string Description => string.Concat(
 		nameof(CompressedSize), ": ", CompressedSize.ToString(), ", ",
 		nameof(UnCompressedSize), ": ", UnCompressedSize.ToString(), ", ",
 		nameof(CompressionPercentage), ": ", CompressionPercentage, ", ",
 		nameof(CompressionRatio), ": ", CompressionRatio.ToString(), ", ",
-		nameof(CompressionFormat), ": ", CompressionFormat.ToString(), ", ",
-	]);
+		nameof(CompressionFormat), ": ", CompressionFormat.ToString()
+	);
 
 	// For use to save the data
 	public void ExposeData()
@@ -118,42 +118,13 @@ public struct CompressionStat : IExposable, IEquatable<CompressionStat>
 			return;
 		}
 
-#pragma warning disable IDE0011 // Add braces
 		// We need only 8 bytes to access the headers
 		byte[] buffer = new byte[8];
 		using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
 		int bytesRead = fs.Read(buffer, 0, buffer.Length);
-		if (CheckHeader(buffer, bytesRead, 0xEF, 0xBB, 0xBF))
-			compressionFormat = CompFormat.None; // header for BOM (plain text)
-		else if (CheckHeader(buffer, bytesRead, 0x3C, 0x3F, 0x78, 0x6D, 0x6C))
-			compressionFormat = CompFormat.None; // header for xml (without BOM)
-		else if (CheckHeader(buffer, bytesRead, 0x28, 0xB5, 0x2F, 0xFD))
-			compressionFormat = CompFormat.zstd; // header for zstd
-		else if (CheckHeader(buffer, bytesRead, 0x1F, 0x8B, 0x08))
-			compressionFormat = CompFormat.Gzip; // header for Gzip
-		else // Unknown format from header
-		{
-			fs.Seek(0, SeekOrigin.Begin);
-			try
-			{
-				// If DeflateStream can decompress it, it's probably deflate
-				using DeflateStream deflateStream
-					= new(fs, CompressionMode.Decompress, leaveOpen: true);
-				int bytesDecompressed = deflateStream.Read(buffer, 0, buffer.Length);
-				if (bytesDecompressed > 0)
-					compressionFormat = CompFormat.Deflate;
-				else
-					compressionFormat = CompFormat.None;
-			}
-			catch (Exception e) when (e is InvalidDataException or IOException)
-			{
-				// Error using DeflateStream, assume plain text
-				compressionFormat = CompFormat.None;
-			}
-		}
-#pragma warning restore IDE0011 // Add braces
-
+		compressionFormat = ParseHeader(buffer, fs, bytesRead);
 		compressedSize = new FileInfo(filePath).Length;
+
 		switch (compressionFormat)
 		{
 			case CompFormat.None:
@@ -177,14 +148,37 @@ public struct CompressionStat : IExposable, IEquatable<CompressionStat>
 			SaveFileCompression.settings.compressionData[filePath] = this;
 	}
 
-	public readonly bool Equals(CompressionStat other)
+	public static CompFormat ParseHeader(byte[] buffer, FileStream fs, int bytesRead)
 	{
-		return compressionFormat == other.compressionFormat
-			&& compressedSize == other.compressedSize
-			&& unCompressedSize == other.unCompressedSize;
+		if (CheckHeader(buffer, bytesRead, 0xEF, 0xBB, 0xBF))
+			return CompFormat.None; // header for BOM (plain text)
+		if (CheckHeader(buffer, bytesRead, 0x3C, 0x3F, 0x78, 0x6D, 0x6C))
+			return CompFormat.None; // header for xml (without BOM)
+		if (CheckHeader(buffer, bytesRead, 0x28, 0xB5, 0x2F, 0xFD))
+			return CompFormat.zstd; // header for zstd
+		if (CheckHeader(buffer, bytesRead, 0x1F, 0x8B, 0x08))
+			return CompFormat.Gzip; // header for Gzip
+
+		// Unknown format from header
+		fs.Seek(0, SeekOrigin.Begin);
+		try
+		{
+			// If DeflateStream can decompress it, it's probably deflate
+			using DeflateStream deflateStream
+				= new(fs, CompressionMode.Decompress, leaveOpen: true);
+			int bytesDecompressed = deflateStream.Read(buffer, 0, buffer.Length);
+			return bytesDecompressed > 0
+				? CompFormat.Deflate
+				: CompFormat.None;
+		}
+		catch (Exception e) when (e is InvalidDataException or IOException)
+		{
+			// Error using DeflateStream, assume plain text
+			return CompFormat.None;
+		}
 	}
 
-	public static bool CheckHeader(byte[] header, int readLength, params int[] bytes)
+	public static bool CheckHeader(byte[] header, int readLength, params byte[] bytes)
 	{
 		if (bytes.Length > readLength)
 			return false;
@@ -194,6 +188,13 @@ public struct CompressionStat : IExposable, IEquatable<CompressionStat>
 				return false;
 		}
 		return true;
+	}
+
+	public readonly bool Equals(CompressionStat other)
+	{
+		return compressionFormat == other.compressionFormat
+			&& compressedSize == other.compressedSize
+			&& unCompressedSize == other.unCompressedSize;
 	}
 
 	public override readonly bool Equals(object obj)
