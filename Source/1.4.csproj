@@ -11,15 +11,12 @@
 	<ItemGroup>
 		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.4.3901" />
 		<PackageReference Include="Lib.Harmony" Version="2.2.2" ExcludeAssets="runtime" />
-		<ProjectReference Include="Common.csproj">
+		<ProjectReference Include="1.2-1.6.csproj">
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 		</ProjectReference>
 		<Reference Include="SaveFileCompression_Common">
-			<HintPath>..\Common\Assemblies\SaveFileCompression_Common.dll</HintPath>
+			<HintPath>..\1.2-1.6\Assemblies\SaveFileCompression_Common.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
-		<Compile Remove="obj\**" />
-		<EmbeddedResource Remove="obj\**" />
-		<None Remove="obj\**" />
 	</ItemGroup>
 </Project>

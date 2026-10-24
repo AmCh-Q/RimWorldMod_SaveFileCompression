@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<!-- Framework properties
+		https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#framework-properties -->
+		<TargetFramework>net472</TargetFramework>
+		<AssemblyName>SaveFileCompression_Common</AssemblyName>
+		<!-- This project has no source of its own, surpress pointless warnings. -->
+		<EnableNETAnalyzers>false</EnableNETAnalyzers>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43" />
+		<PackageReference Include="ZstdSharp.Port" Version="0.8.6" />
+		<Compile Remove="**" />
+		<EmbeddedResource Remove="**" />
+		<None Remove="**" />
+	</ItemGroup>
+</Project>

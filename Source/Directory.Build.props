@@ -13,7 +13,7 @@ Additionally, the property BaseIntermediateOutputPath has to be set here, explan
 		<!-- Package properties
 		https://learn.microsoft.com/en-us/nuget/reference/msbuild-targets#pack-target -->
 		<Authors>AmCh</Authors>
-		<Copyright>Copyright © AmCh 2025</Copyright>
+		<Copyright>Copyright © AmCh 2026</Copyright>
 		<!--
 		<PackageLicenseFile>..\LICENSE</PackageLicenseFile>
 		<PackageReadmeFile>..\README.md</PackageReadmeFile>
@@ -23,7 +23,7 @@ Additionally, the property BaseIntermediateOutputPath has to be set here, explan
 		https://learn.microsoft.com/en-us/visualstudio/msbuild/common-msbuild-project-properties -->
 		<RootNamespace>SaveFileCompression</RootNamespace>
 		<AssemblyName>Save File Compression</AssemblyName>
-		<OutDir Condition=" '$(MSBuildProjectName)' != 'Common' ">..\$(MSBuildProjectName)\Assemblies</OutDir>
+		<OutDir Condition=" '$(MSBuildProjectName)' != '1.2-1.6' ">..\$(MSBuildProjectName)\Assemblies</OutDir>
 		<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
 		<ErrorReport>prompt</ErrorReport>
 		<!-- Assembly attribute properties
@@ -52,5 +52,18 @@ Additionally, the property BaseIntermediateOutputPath has to be set here, explan
 		<ILRepackInternalize>true</ILRepackInternalize>
 		<ILRepackAllowDuplicateResources>true</ILRepackAllowDuplicateResources>
 		<ILRepackAllowDuplicateTypes>true</ILRepackAllowDuplicateTypes>
+		<!-- Exclude obj/1.2-1.6/'s empty SaveFileCompression_Common.dll else ResolveAssemblyReference binds to it
+		https://learn.microsoft.com/visualstudio/msbuild/resolveassemblyreference-task-->
+		<DefaultItemExcludes>$(DefaultItemExcludes);obj\**</DefaultItemExcludes>
 	</PropertyGroup>
+	<!-- The editor cannot see the types in the ILRepack-generated SaveFileCompression_Common.dll -->
+	<Target Name="UseZstdSharpForDesignTime" BeforeTargets="ResolveAssemblyReferences" Condition=" '$(DesignTimeBuild)' == 'true' ">
+		<ItemGroup Condition=" '@(Reference->AnyHaveMetadataValue('Identity', 'SaveFileCompression_Common'))' == 'true' and '@(ZstdSharpDll)' != '' ">
+			<ZstdSharpDll Include="$(NuGetPackageRoot)zstdsharp.port\*\lib\net462\ZstdSharp.dll" />
+			<Reference Remove="SaveFileCompression_Common" />
+			<Reference Include="ZstdSharp">
+				<HintPath>%(ZstdSharpDll.FullPath)</HintPath>
+			</Reference>
+		</ItemGroup>
+	</Target>
 </Project>

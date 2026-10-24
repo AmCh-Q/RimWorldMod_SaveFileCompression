@@ -3,7 +3,7 @@
   <packageId>AmCh.SaveFileCompression</packageId>
   <name>Save File Compression</name>
   <author>AmCh</author>
-  <modVersion IgnoreIfNoMatchingField="True">1.0.2</modVersion>
+  <modVersion IgnoreIfNoMatchingField="True">1.1.0</modVersion>
   <modIconPath IgnoreIfNoMatchingField="True">SaveFileCompression/ModIcon</modIconPath>
   <steamAppId>3562729067</steamAppId>
   <url>https://github.com/AmCh-Q/RimWorldMod_SaveFileCompression</url>
@@ -13,6 +13,7 @@
     <li>1.4</li>
     <li>1.5</li>
     <li>1.6</li>
+    <li>1.7</li>
   </supportedVersions>
   <description>
 Uses compression to save your game.
