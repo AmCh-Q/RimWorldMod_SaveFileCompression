@@ -30,8 +30,8 @@ public static class BeginReading
 	public static IEnumerable<CodeInstruction> Transpiler(
 		IEnumerable<CodeInstruction> instructions)
 	{
-		MethodInfo m_Load_Path = typeof(XDocument).GetMethod(nameof(XDocument.Load), [typeof(string)]);
-		MethodInfo m_LoadDocumentFromPath = typeof(BeginReading).GetMethod(nameof(LoadDocumentFromPath));
+		MethodInfo m_Load_Path = typeof(XDocument).GetMethod(nameof(XDocument.Load), [typeof(string)])!;
+		MethodInfo m_LoadDocumentFromPath = typeof(BeginReading).GetMethod(nameof(LoadDocumentFromPath))!;
 
 		List<CodeInstruction> iList = [.. instructions];
 		for (int i = 0; i < iList.Count; i++)

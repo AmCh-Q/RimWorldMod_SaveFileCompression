@@ -20,8 +20,8 @@ public static class Debug
 {
 	private static readonly ConcurrentQueue<(LogLevel, object)> messagesQueue = new();
 
-	public static readonly MethodInfo m_Clear = typeof(Log).GetMethod(nameof(Verse.Log.Clear));
-	public static readonly MethodInfo g_Messages = typeof(Log).GetProperty(nameof(Verse.Log.Messages)).GetGetMethod();
+	public static readonly MethodInfo m_Clear = typeof(Log).GetMethod(nameof(Verse.Log.Clear))!;
+	public static readonly MethodInfo g_Messages = typeof(Log).GetProperty(nameof(Verse.Log.Messages))!.GetGetMethod()!;
 
 	internal static void Patch(Harmony harmony)
 	{

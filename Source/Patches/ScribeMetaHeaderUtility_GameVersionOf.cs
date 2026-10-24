@@ -8,7 +8,7 @@ public static class ScribeMetaHeaderUtility_GameVersionOf
 {
 	public static readonly MethodInfo original =
 		typeof(ScribeMetaHeaderUtility)
-		.GetMethod(nameof(ScribeMetaHeaderUtility.GameVersionOf));
+		.GetMethod(nameof(ScribeMetaHeaderUtility.GameVersionOf))!;
 
 	public static void Patch(Harmony harmony)
 	{

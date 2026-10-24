@@ -10,7 +10,7 @@ namespace SaveFileCompression.Patches;
 public static class ScribeSaver_InitSaving
 {
 	public static readonly MethodInfo original
-		= typeof(ScribeSaver).GetMethod(nameof(ScribeSaver.InitSaving));
+		= typeof(ScribeSaver).GetMethod(nameof(ScribeSaver.InitSaving))!;
 
 	public static void Patch(Harmony harmony)
 	{
@@ -26,7 +26,7 @@ public static class ScribeSaver_InitSaving
 		IEnumerable<CodeInstruction> codeInstructions)
 	{
 		MethodInfo m_CompressedStream
-			= typeof(ScribeSaver_InitSaving).GetMethod(nameof(CompressedStream));
+			= typeof(ScribeSaver_InitSaving).GetMethod(nameof(CompressedStream))!;
 		foreach (CodeInstruction codeInstruction in codeInstructions)
 		{
 			yield return codeInstruction; // Stream rawStream

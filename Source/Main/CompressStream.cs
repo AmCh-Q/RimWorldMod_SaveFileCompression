@@ -35,7 +35,7 @@ public class CompressStream : Stream
 	public CompressStream(Stream sourceStream, string filePath, CompFormat compressionFormat, int level = 1)
 	{
 		// Verse.SafeSaver.NewFileSuffix
-		if (filePath.EndsWith(".new"))
+		if (filePath.EndsWith(".new", StringComparison.OrdinalIgnoreCase))
 			FilePath = filePath.Substring(0, filePath.Length - 4);
 		else
 			FilePath = filePath;

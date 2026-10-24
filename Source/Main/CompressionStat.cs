@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -29,14 +30,14 @@ public struct CompressionStat : IExposable, IEquatable<CompressionStat>
 
 	public readonly NamedArgument UnCompressedSizeArg
 		=> new(UnCompressedSize > 0
-			? (UnCompressedSize / 1048576f).ToString("F2")
+			? (UnCompressedSize / 1048576f).ToString("F2", CultureInfo.CurrentCulture)
 			: "?", nameof(UnCompressedSize));
 
 	public readonly long CompressedSize => compressedSize;
 
 	public readonly NamedArgument CompressedSizeArg
 		=> new(CompressedSize > 0
-			? (CompressedSize / 1048576f).ToString("F2")
+			? (CompressedSize / 1048576f).ToString("F2", CultureInfo.CurrentCulture)
 			: "?", nameof(CompressedSize));
 
 	public readonly float CompressionRatio
@@ -58,10 +59,10 @@ public struct CompressionStat : IExposable, IEquatable<CompressionStat>
 	}
 
 	public readonly string Description => string.Concat(
-		nameof(CompressedSize), ": ", CompressedSize.ToString(), ", ",
-		nameof(UnCompressedSize), ": ", UnCompressedSize.ToString(), ", ",
+		nameof(CompressedSize), ": ", CompressedSize.ToString(CultureInfo.CurrentCulture), ", ",
+		nameof(UnCompressedSize), ": ", UnCompressedSize.ToString(CultureInfo.CurrentCulture), ", ",
 		nameof(CompressionPercentage), ": ", CompressionPercentage, ", ",
-		nameof(CompressionRatio), ": ", CompressionRatio.ToString(), ", ",
+		nameof(CompressionRatio), ": ", CompressionRatio.ToString(CultureInfo.CurrentCulture), ", ",
 		nameof(CompressionFormat), ": ", CompressionFormat.ToString()
 	);
 
@@ -152,7 +153,7 @@ public struct CompressionStat : IExposable, IEquatable<CompressionStat>
 	{
 		if (CheckHeader(buffer, bytesRead, 0xEF, 0xBB, 0xBF))
 			return CompFormat.None; // header for BOM (plain text)
-		if (CheckHeader(buffer, bytesRead, 0x3C, 0x3F, 0x78, 0x6D, 0x6C))
+		if (CheckHeader(buffer, bytesRead, "<?xml "u8.ToArray()))
 			return CompFormat.None; // header for xml (without BOM)
 		if (CheckHeader(buffer, bytesRead, 0x28, 0xB5, 0x2F, 0xFD))
 			return CompFormat.zstd; // header for zstd
@@ -197,7 +198,7 @@ public struct CompressionStat : IExposable, IEquatable<CompressionStat>
 			&& unCompressedSize == other.unCompressedSize;
 	}
 
-	public override readonly bool Equals(object obj)
+	public override readonly bool Equals(object? obj)
 		=> obj is CompressionStat stat && Equals(stat);
 
 	public static bool operator ==(CompressionStat left, CompressionStat right)

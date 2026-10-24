@@ -18,7 +18,7 @@ public class Settings : ModSettings
 
 	internal Dictionary<string, CompressionStat> compressionData = [];
 	internal readonly object compressionDataLock = new();
-	public bool compressionDataDirty = false;
+	public bool compressionDataDirty;
 
 	public override void ExposeData()
 	{

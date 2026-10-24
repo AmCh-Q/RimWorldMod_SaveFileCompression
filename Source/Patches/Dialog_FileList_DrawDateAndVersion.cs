@@ -9,7 +9,7 @@ namespace SaveFileCompression.Patches;
 public static class Dialog_FileList_DrawDateAndVersion
 {
 	public static readonly MethodInfo original
-		= typeof(Dialog_FileList).GetMethod(nameof(Dialog_FileList.DrawDateAndVersion));
+		= typeof(Dialog_FileList).GetMethod(nameof(Dialog_FileList.DrawDateAndVersion))!;
 
 	public static void Patch(Harmony harmony)
 	{
